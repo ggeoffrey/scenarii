@@ -14,7 +14,7 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
-import scenarii.geometry.Rect;
+import scenarii.camera.Camera;
 import scenarii.overlay.Overlay;
 
 public class Main extends Application implements NativeMouseMotionListener, NativeKeyListener {
@@ -23,6 +23,7 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
     private TextArea area;
 
     private Overlay overlay;
+    private Camera camera;
 
     // actions
     private boolean ctrlKey;
@@ -68,6 +69,13 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
             case 29:
                 ctrlKey = true;
                 mouseOrigin = mousePosition;
+                camera.stopRecord();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        overlay.showForDistort();
+                    }
+                });
                 break;
             case 42:
                 shiftKey = true;
@@ -83,6 +91,13 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
             case 29:
                 ctrlKey = false;
                 mouseOrigin = null;
+                camera.startRecord();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        overlay.hideForDistort();
+                    }
+                });
                 break;
             case 42:
                 shiftKey = false;
@@ -125,6 +140,7 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
 
         overlay = new Overlay();
         overlay.show();
+        camera = new Camera(overlay, 30);
     }
 
     @Override

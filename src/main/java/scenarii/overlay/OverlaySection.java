@@ -1,6 +1,7 @@
 package scenarii.overlay;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -9,12 +10,15 @@ import javafx.stage.StageStyle;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.geometry.Line;
 
+import java.util.function.Consumer;
+
 /**
  * Created by geoffrey on 22/05/2016.
  */
 public class OverlaySection extends Stage {
 
     private SectionOrientation displayMode;
+    private AnchorPane root;
 
     public OverlaySection(SectionOrientation orientation) {
         super(StageStyle.TRANSPARENT);
@@ -24,7 +28,7 @@ public class OverlaySection extends Stage {
 
 
 
-        AnchorPane root = new AnchorPane();
+        root = new AnchorPane();
         makeOverlay(root);
         root.setBackground(null);
 

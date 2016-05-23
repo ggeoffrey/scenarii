@@ -1,9 +1,12 @@
 package scenarii.geometry;
 
+import java.awt.*;
+
 /**
  * Created by geoffrey on 23/05/2016.
  */
 public class Rect {
+
     private Point origin;
     private double width;
     private double height;
@@ -42,6 +45,14 @@ public class Rect {
 
     public void setHeight(double height) {
         this.height = height;
+    }
+
+    public Rectangle toAWTRectangle(){
+        return new Rectangle(
+                (int) origin.getX(),
+                (int) origin.getY(),
+                (int) width,
+                (int) height);
     }
 
 

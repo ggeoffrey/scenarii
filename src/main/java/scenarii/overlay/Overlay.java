@@ -1,7 +1,6 @@
 package scenarii.overlay;
 
 import org.jnativehook.mouse.NativeMouseEvent;
-import scenarii.geometry.Point;
 import scenarii.geometry.Rect;
 
 /**
@@ -33,6 +32,16 @@ public class Overlay {
     public void hide(){
         top.hide();
         bottom.hide();
+    }
+
+    public void showForDistort(){
+        top.setOpacity(1.);
+        bottom.setOpacity(1.);
+    }
+
+    public void hideForDistort(){
+        top.setOpacity(0.5);
+        bottom.setOpacity(0.5);
     }
 
 
