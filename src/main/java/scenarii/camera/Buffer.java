@@ -58,13 +58,6 @@ public class Buffer<T> {
         return null;
     }
 
-    //public void removeLast(){
-    //    if(tail != null && tail.previous != null){
-    //        tail = tail.previous;
-    //        tail.next = null;
-    //        size--;
-    //    }
-    //}
 
     public int size(){
         return size;

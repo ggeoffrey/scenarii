@@ -1,7 +1,9 @@
 package scenarii.overlay;
 
 import org.jnativehook.mouse.NativeMouseEvent;
-import scenarii.geometry.Rect;
+
+
+import java.awt.*;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -35,13 +37,13 @@ public class Overlay {
     }
 
     public void showForDistort(){
-        top.setOpacity(1.);
-        bottom.setOpacity(1.);
+        top.showForDistort();
+        bottom.showForDistort();
     }
 
     public void hideForDistort(){
-        top.setOpacity(0.5);
-        bottom.setOpacity(0.5);
+        top.hideForDistort();
+        bottom.hideForDistort();
     }
 
 
@@ -50,12 +52,14 @@ public class Overlay {
         double deltaX = computeDelta(xOrigin, xCurrent);
         double deltaY = computeDelta(yOrigin, yCurrent);
 
-
-        top.alterWidth(deltaX);
-        bottom.alterWidth(deltaX);
-        top.alterHeight(deltaY);
-        bottom.alterHeight(deltaY);
-
+        if(deltaX > 2.5 || deltaX < -2.5){
+            top.alterWidth(deltaX);
+            bottom.alterWidth(deltaX);
+        }
+        if(deltaY > 2.5 || deltaY < -2.5){
+            top.alterHeight(deltaY);
+            bottom.alterHeight(deltaY);
+        }
         setPosition(xOrigin,yOrigin);
     }
 
@@ -67,8 +71,12 @@ public class Overlay {
             return Math.log(current - origin);
     }
 
-    public Rect getRect(){
-        return new Rect(top.getX(),top.getY(), top.getWidth(), top.getHeight() * 2 + 1);
+    public Rectangle getRect(){
+        return new Rectangle(
+                (int) top.getX(),
+                (int) top.getY(),
+                (int) top.getWidth(),
+                (int) top.getHeight() * 2 + 1);
     }
 
 }

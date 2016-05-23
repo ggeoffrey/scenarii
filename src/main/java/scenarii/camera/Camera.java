@@ -54,4 +54,9 @@ public class Camera extends Thread {
     }
 
 
+    public boolean isRecording(){
+        return recorder.isRecording();
+    }
+
+
 }

@@ -1,9 +1,13 @@
 package scenarii.overlay;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -20,19 +24,20 @@ public class OverlaySection extends Stage {
     private SectionOrientation displayMode;
     private AnchorPane root;
 
+    private Line leftLine;
+    private Line centerLine;
+    private Line rightLine;
+
+    private Arc arc;
+
     public OverlaySection(SectionOrientation orientation) {
         super(StageStyle.TRANSPARENT);
 
-
         this.displayMode = orientation;
-
-
 
         root = new AnchorPane();
         makeOverlay(root);
         root.setBackground(null);
-
-
 
         Scene scene = new Scene(root, 150, 75);
         scene.setFill(null);
@@ -40,7 +45,6 @@ public class OverlaySection extends Stage {
 
         this.setAlwaysOnTop(true);
         this.initModality(Modality.APPLICATION_MODAL);
-
     }
 
     public void setPosition(NativeMouseEvent event){
@@ -59,25 +63,55 @@ public class OverlaySection extends Stage {
         ReadOnlyDoubleProperty w = root.widthProperty();
         ReadOnlyDoubleProperty h = root.heightProperty();
 
-        Line left  = new Line();
-        left.bindEndY(h);
-
-        Line right = new Line();
-        right.bindStartX(w);
-        right.bindEndX(w);
-        right.bindEndY(h);
-
-        Line center = new Line();
+        arc = new Arc();
+        arc.setCenterX(w.doubleValue()/2);
+        w.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                arc.setCenterX(newValue.doubleValue()/2);
+            }
+        });
+        arc.setCenterY(0);
+        arc.setStartAngle(190);
+        arc.setLength(160);
         if(displayMode == SectionOrientation.TOP){
-            center.bindEndX(w);
+            arc.setCenterY(h.doubleValue());
+            h.addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    arc.setCenterY(newValue.doubleValue());
+                }
+            });
+            arc.setStartAngle(10);
+            arc.setLength(160);
+        }
+        arc.setRadiusX(20);
+        arc.setRadiusY(20);
+
+        arc.setStroke(Color.RED);
+        arc.setStrokeWidth(2);
+        arc.setFill(Color.TRANSPARENT);
+
+        leftLine  = new Line();
+        leftLine.bindEndY(h);
+
+        rightLine = new Line();
+        rightLine.bindStartX(w);
+        rightLine.bindEndX(w);
+        rightLine.bindEndY(h);
+
+        centerLine = new Line();
+        if(displayMode == SectionOrientation.TOP){
+            centerLine.bindEndX(w);
         }
         else{
-            center.bindStartY(h);
-            center.bindEndX(w);
-            center.bindEndY(h);
+            centerLine.bindStartY(h);
+            centerLine.bindEndX(w);
+            centerLine.bindEndY(h);
         }
 
-        root.getChildren().addAll(left,right,center);
+        root.getChildren().addAll(leftLine,centerLine,rightLine,arc);
+
     }
 
 
@@ -95,4 +129,15 @@ public class OverlaySection extends Stage {
         }
     }
 
+    public void showForDistort(){
+        leftLine.setVisible(true);
+        rightLine.setVisible(true);
+        centerLine.setVisible(true);
+    }
+
+    public void hideForDistort(){
+        leftLine.setVisible(false);
+        rightLine.setVisible(false);
+        centerLine.setVisible(false);
+    }
 }

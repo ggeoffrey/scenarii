@@ -46,18 +46,8 @@ public class Recorder extends TimerTask {
     private void shot(){
         BufferedImage rawImage;
         rawImage = getRawImage();
-
         BufferedImage cropped = cropImage(rawImage, overlay);
         this.buffer.add(cropped);
-
-        //try {
-        //    ImageIO.write(cropped, "png", new File("./shots/shot-"+shotCounter+".png"));
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
-
-
-        System.out.println("SHOT: " + this.shotCounter);
     }
 
 
@@ -66,18 +56,18 @@ public class Recorder extends TimerTask {
     }
 
     private BufferedImage cropImage(BufferedImage image, Overlay overlay){
-        Rectangle fov = overlay.getRect().toAWTRectangle();
+        Rectangle fov = overlay.getRect();
 
         int x = fov.getX() < 0 ? 0 : (int) fov.getX();
         int y = fov.getY() < 0 ? 0 : (int) fov.getY();
 
         int width = (int) fov.getWidth();
         if((x + width) > image.getWidth())
-            width = (x + width) - image.getWidth();
+            width = image.getWidth() - x;
 
         int height = (int) fov.getHeight();
         if((y + height) > image.getHeight())
-            height = (y + height) - image.getHeight();
+            height = image.getHeight() - y;
 
         return image.getSubimage(x,y,width,height);
     }
@@ -122,4 +112,21 @@ public class Recorder extends TimerTask {
         }
     }
 
+    private Point getGlobalMousePosition(){
+        return MouseInfo.getPointerInfo().getLocation();
+    }
+
+    private Point getLocalMousePosition(Overlay overlay){
+        Point globalPos = getGlobalMousePosition();
+        Point corner = overlay.getRect().getLocation();
+
+        int xLocal = (int) (globalPos.getX() - corner.getX());
+        int yLocal = (int) (globalPos.getY() - corner.getY());
+
+        return new Point(xLocal, yLocal);
+    }
+
+    public boolean isRecording(){
+        return shouldRun;
+    }
 }

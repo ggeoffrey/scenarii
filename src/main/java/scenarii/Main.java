@@ -28,6 +28,9 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
     // actions
     private boolean ctrlKey;
     private boolean shiftKey;
+    private boolean altKey;
+
+    private boolean isResizing;
 
 
     private NativeMouseEvent mousePosition;
@@ -45,14 +48,18 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
             final double xc = nativeMouseEvent.getX();
             final double yc = nativeMouseEvent.getY();
 
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    overlay.distort(xo,yo, xc,yc);
-                }
-            });
+            if(!isResizing) {
+                isResizing = true;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        overlay.distort(xo, yo, xc, yc);
+                        isResizing = false;
+                    }
+                });
+            }
         }
-        else {
+        else{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -64,21 +71,16 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        //area.appendText(nativeKeyEvent.getKeyCode()+"\n");
         switch (nativeKeyEvent.getKeyCode()){
             case 29:
                 ctrlKey = true;
                 mouseOrigin = mousePosition;
-                camera.stopRecord();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        overlay.showForDistort();
-                    }
-                });
                 break;
             case 42:
                 shiftKey = true;
+                break;
+            case 56:
+                altKey = true;
                 break;
             default:
                 break;
@@ -91,25 +93,38 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
             case 29:
                 ctrlKey = false;
                 mouseOrigin = null;
-                camera.startRecord();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        overlay.hideForDistort();
-                    }
-                });
                 break;
             case 42:
                 shiftKey = false;
                 break;
+            case 56:
+                altKey = false;
+                if(camera.isRecording()) {
+                    camera.stopRecord();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            overlay.showForDistort();
+                        }
+                    });
+                }
+                else{
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            overlay.hideForDistort();
+                        }
+                    });
+                    camera.startRecord();
+                }
             default:
+                area.appendText(nativeKeyEvent.getKeyCode()+"\n");
                 break;
         }
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
     }
 
     @Override
