@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="70mm"
+   height="15mm"
+   viewBox="0 0 744.09449 1052.3622"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="109.39986"
+     inkscape:cy="57.367863"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="699"
+     inkscape:window-x="0"
+     inkscape:window-y="1"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       position="393.21429,858.92859"
+       orientation="1,0"
+       id="guide3354" />
+    <sodipodi:guide
+       position="415.53572,858.75002"
+       orientation="1,0"
+       id="guide3398" />
+    <sodipodi:guide
+       position="415.53572,858.75002"
+       orientation="0,1"
+       id="guide3400" />
+    <sodipodi:guide
+       position="423.57143,854.46431"
+       orientation="0,1"
+       id="guide3404" />
+    <sodipodi:guide
+       position="408.21429,863.75002"
+       orientation="0,1"
+       id="guide3406" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="matrix(17.826636,0,0,17.826636,-4853.7461,-3311.8936)">
+    <g
+       id="g4252">
+      <flowRoot
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:80px;line-height:125%;font-family:Zapfino;-inkscape-font-specification:'Zapfino Italic';letter-spacing:0px;word-spacing:0px;fill:#202020;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+         id="flowRoot3336"
+         xml:space="preserve"><flowRegion
+           id="flowRegion3338"><rect
+             style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:80px;font-family:Zapfino;-inkscape-font-specification:'Zapfino Italic';stroke:none;stroke-opacity:1;fill:#202020;fill-opacity:1;"
+             y="170.49904"
+             x="157.5838"
+             height="196.97975"
+             width="456.58896"
+             id="rect3340" /></flowRegion><flowPara
+           style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:80px;font-family:'Hoefler Text';-inkscape-font-specification:'Hoefler Text Thin';fill:#202020;fill-opacity:1;stroke:none;stroke-opacity:1;"
+           id="flowPara3342">Scenarii</flowPara></flowRoot>      <text
+         sodipodi:linespacing="125%"
+         id="text3344"
+         y="180.60056"
+         x="365.67523"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="180.60056"
+           x="365.67523"
+           id="tspan3346"
+           sodipodi:role="line" /></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3348"
+         y="219.50507"
+         x="428.21429"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="219.50507"
+           x="428.21429"
+           id="tspan3350"
+           sodipodi:role="line" /></text>
+      <circle
+         transform="scale(1,-1)"
+         style="fill:#00ff00;stroke:#282828;stroke-opacity:1"
+         r="4.6428576"
+         cy="-193.25505"
+         cx="393.30359"
+         id="path3352" />
+      <circle
+         r="4.6428556"
+         cy="193.25505"
+         cx="415.53571"
+         id="path3402"
+         style="fill:#ff0000;stroke:#282828;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
