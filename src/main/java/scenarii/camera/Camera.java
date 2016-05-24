@@ -21,7 +21,7 @@ public class Camera extends Thread {
     private Runnable asyncTask;
 
     public Camera(Overlay overlay){
-        build(overlay, 1);
+        build(overlay, 30);
     }
 
     public Camera(Overlay overlay, int fps) {
@@ -48,7 +48,6 @@ public class Camera extends Thread {
     }
 
 
-
     private int fpsToDelay(int fps){
         return (int) ((1./fps) * 1000);
     }
@@ -58,5 +57,15 @@ public class Camera extends Thread {
         return recorder.isRecording();
     }
 
+
+    public void reset(){
+        timer.cancel();
+        recorder = new Recorder(overlay, fpsToDelay(fps));
+        timer.scheduleAtFixedRate(recorder, 0, fpsToDelay(fps));
+    }
+
+    public String getLastImageProduced(){
+        return recorder.getLastImageProduced();
+    }
 
 }

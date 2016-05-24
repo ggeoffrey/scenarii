@@ -20,7 +20,7 @@ public class BufferTest {
     @org.junit.Test
     public void add() throws Exception {
         Buffer<Integer> sb = getBuffer();
-        assertEquals(3, sb.size());
+        assertEquals(4, sb.size());
     }
 
     @org.junit.Test
@@ -33,7 +33,7 @@ public class BufferTest {
     public void pop() throws Exception {
         Buffer<Integer> sb = getBuffer();
         assertEquals((int) sb.pop(), 4);
-        assertEquals(2, sb.size());
+        assertEquals(3, sb.size());
     }
 
 

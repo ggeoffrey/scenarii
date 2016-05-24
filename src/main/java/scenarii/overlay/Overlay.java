@@ -63,6 +63,11 @@ public class Overlay {
         setPosition(xOrigin,yOrigin);
     }
 
+    public void close(){
+        top.close();
+        bottom.close();
+    }
+
 
     private double computeDelta(double origin, double current){
         if(current < origin)

@@ -14,9 +14,9 @@
 
 <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="798.0" styleClass="step" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <StackPane prefHeight="150.0" prefWidth="275.0">
+      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="150.0" prefWidth="250.0" styleClass="gif-container" HBox.hgrow="ALWAYS">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER">
+            <ImageView pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER">
                <image>
                   <Image url="@../shots/shot-0-33.gif" />
                </image>
@@ -41,7 +41,7 @@
             </StackPane>
          </children>
       </StackPane>
-      <VBox>
+      <VBox HBox.hgrow="ALWAYS">
          <children>
             <Label text="Description :" />
             <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" />

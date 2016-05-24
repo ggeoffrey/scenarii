@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
@@ -25,7 +26,24 @@ public class Recorder extends TimerTask {
     private int shotCounter;
     private int delay;
 
+    private long uniqueName;
+    private String folderPath;
+
+    private String lastImageProduced;
+
     public Recorder(Overlay overlay, int delay) {
+        this.uniqueName = new Date().getTime();
+
+        String path = System.getProperty("user.home")+"/scenarii-snaps/";
+        File folder = new File(path);
+        if(!folder.exists()){
+            folder.mkdir();
+        }
+        this.folderPath = path + this.uniqueName;
+        new File(this.folderPath).mkdir();
+
+
+
         this.overlay = overlay;
         this.delay = delay;
         this.shotCounter = 0;
@@ -85,11 +103,13 @@ public class Recorder extends TimerTask {
     protected void exportShot(){
         if(buffer.size() > 0){
             try {
+
+                lastImageProduced = this.folderPath+"/shot-"+shotCounter+".gif";
                 ImageOutputStream output =
-                        new FileImageOutputStream(new File("./shots/shot-"+shotCounter+"-"+delay+".gif"));
+                        new FileImageOutputStream(new File(lastImageProduced));
 
                 GifSequenceWriter writer =
-                        new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*3, false);
+                        new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*3, true);
 
                 this.buffer.forEach(new Consumer<BufferedImage>() {
                     @Override
@@ -129,4 +149,9 @@ public class Recorder extends TimerTask {
     public boolean isRecording(){
         return shouldRun;
     }
+
+    public String getLastImageProduced(){
+        return "file:"+lastImageProduced;
+    }
+
 }
