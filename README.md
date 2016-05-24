@@ -1,2 +1,2 @@
 # scenarii
-Describe teste steps with GIFs. Better than words and cultural agnostic !
+Describe test steps with GIFs. Better than words and cultural agnostic !
