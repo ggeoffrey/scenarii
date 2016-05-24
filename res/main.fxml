@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="/res/main.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scenarii.controllers.MainController">
+   <top>
+      <ToolBar prefHeight="17.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <items>
+            <HBox fillHeight="false" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="782.0">
+               <children>
+                <Button fx:id="export" mnemonicParsing="false" text="Export" />
+                  <Button fx:id="exportTo" mnemonicParsing="false" text="Export to…" />
+                  <Button fx:id="compress" mnemonicParsing="false" text="Compress" />
+                  <HBox prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <ProgressIndicator prefHeight="29.0" prefWidth="29.0" progress="0.0" />
+               </children>
+            </HBox>
+        </items>
+      </ToolBar>
+   </top>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+            <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+               <content>
+                  <VBox fx:id="stepsContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="798.0" styleClass="step">
+                           <children>
+                              <StackPane prefHeight="150.0" prefWidth="275.0">
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER">
+                                       <image>
+                                          <Image url="@../shots/shot-0-33.gif" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" styleClass="camera-icon">
+                                       <image>
+                                          <Image url="@camera.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                    <StackPane alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" StackPane.alignment="TOP_LEFT">
+                                       <children>
+                                          <Circle fill="WHITE" radius="15.0" stroke="BLACK" strokeType="INSIDE" StackPane.alignment="CENTER" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="step-number" text="1" StackPane.alignment="CENTER">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                    </StackPane>
+                                 </children>
+                              </StackPane>
+                              <VBox>
+                                 <children>
+                                    <Label text="Description :" />
+                                    <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </center>
+         <top>
+            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Title :" />
+                        <TextField fx:id="title">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></TextField>
+                        <Label text="Author :">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin></Label>
+                        <TextField fx:id="author" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Description :" />
+                        <TextArea fx:id="description" prefHeight="133.0" prefWidth="638.0" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Data :" />
+                        <TextArea fx:id="data" prefHeight="133.0" prefWidth="638.0" styleClass="data" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
+   </center>
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <Button fx:id="addStep" mnemonicParsing="false" text="Add step" />
+        </items>
+      </ToolBar>
+   </bottom>
+</BorderPane>

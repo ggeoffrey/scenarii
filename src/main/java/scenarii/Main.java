@@ -2,6 +2,7 @@ package scenarii;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +21,6 @@ import scenarii.overlay.Overlay;
 public class Main extends Application implements NativeMouseMotionListener, NativeKeyListener {
 
     private Stage stage;
-    private TextArea area;
 
     private Overlay overlay;
     private Camera camera;
@@ -118,7 +118,6 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
                     camera.startRecord();
                 }
             default:
-                area.appendText(nativeKeyEvent.getKeyCode()+"\n");
                 break;
         }
     }
@@ -138,14 +137,10 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
     public void start(final Stage primaryStage) throws Exception {
 
         stage = primaryStage;
-        stage.initStyle(StageStyle.TRANSPARENT);
+        //stage.initStyle(StageStyle.TRANSPARENT);
 
-        BorderPane root = new BorderPane();
-        area = new TextArea();
-        root.setCenter(area);
-        Scene scene = new Scene(root, 300, 275);
-        scene.setFill(null);
-        primaryStage.setScene(scene);
+        BorderPane root = FXMLLoader.load(getClass().getResource("/res/main.fxml"));
+        stage.setScene(new Scene(root, 800, 600));
 
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
         GlobalScreen.addNativeMouseMotionListener(this);
@@ -154,8 +149,8 @@ public class Main extends Application implements NativeMouseMotionListener, Nati
         primaryStage.show();
 
         overlay = new Overlay();
-        overlay.show();
-        camera = new Camera(overlay, 30);
+        //overlay.show();
+        //camera = new Camera(overlay, 30);
     }
 
     @Override
