@@ -1,16 +1,25 @@
 package scenarii.controllers;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import org.pegdown.PegDownProcessor;
+import scenarii.dirtycallbacks.Callback1;
+import scenarii.dirtycallbacks.EmptyCallback;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -27,6 +36,10 @@ public class Step {
     private ImageView cameraIcon;
     private TextArea description;
 
+    private FontAwesomeIconView trash;
+
+    private File imageFile;
+
 
     public Step() {
         build();
@@ -39,6 +52,7 @@ public class Step {
     }
 
     private void build(){
+
         try {
             body = (HBox) FXMLLoader.load(getClass().getResource("/res/step.fxml"));
             positionText = (Text) body.lookup(".step-number");
@@ -46,6 +60,8 @@ public class Step {
             gif = (ImageView) body.lookup(".gif");
             cameraIcon = (ImageView) body.lookup(".camera-icon");
             description = (TextArea) body.lookup(".step-description");
+
+            trash = (FontAwesomeIconView) body.lookup(".trash-button");
 
             positionText.setText(""+position);
 
@@ -75,6 +91,7 @@ public class Step {
     }
 
     public void setImage(String path){
+        imageFile = new File(path);
         Image image = new Image(path);
         gif.setImage(image);
         cameraIcon.setOpacity(0.);
@@ -85,5 +102,26 @@ public class Step {
 
     public void onShotRequest(EventHandler eventHandler){
         cameraIcon.setOnMouseClicked(eventHandler);
+    }
+
+    public void onDeleteRequest(EmptyCallback callback){
+        trash.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                callback.call();
+            }
+        });
+    }
+
+
+    public Map<String,Object> toJadeModel(PegDownProcessor parser){
+        Map<String,Object> model = new HashMap<>();
+
+        model.put("position", position);
+        model.put("description", parser.markdownToHtml(description.getText()));
+        if(imageFile != null)
+            model.put("gif", imageFile.getName());
+
+        return model;
     }
 }

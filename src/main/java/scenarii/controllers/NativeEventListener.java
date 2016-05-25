@@ -6,7 +6,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
 import scenarii.camera.Camera;
-import scenarii.dirtycallbacks.DirtyCallback;
+import scenarii.dirtycallbacks.Callback1;
 import scenarii.overlay.Overlay;
 
 /**
@@ -31,7 +31,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     // Callbacks
 
-    private DirtyCallback<String> onGifGenerated;
+    private Callback1<String> onGifGenerated;
 
 
     //-----------
@@ -48,8 +48,8 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
     }
 
 
-    public void onGifGenerated(DirtyCallback<String> callback){
-        onGifGenerated = callback;
+    public void onGifGenerated(Callback1<String> callback1){
+        onGifGenerated = callback1;
     }
 
     @Override

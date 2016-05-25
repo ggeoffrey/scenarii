@@ -10,13 +10,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.SwingDispatchService;
 import scenarii.camera.Camera;
-import scenarii.dirtycallbacks.DirtyCallback;
+import scenarii.dirtycallbacks.Callback1;
+import scenarii.dirtycallbacks.EmptyCallback;
+import scenarii.exporters.HtmlExporter;
+import scenarii.exporters.Scenario;
 import scenarii.overlay.Overlay;
 
 import java.net.URL;
@@ -27,6 +30,9 @@ import java.util.ResourceBundle;
  * Created by geoffrey on 24/05/2016.
  */
 public class MainController implements Initializable {
+
+    @FXML
+    private BorderPane root;
 
     @FXML
     private Button export;
@@ -80,6 +86,14 @@ public class MainController implements Initializable {
         overlay = new Overlay();
         camera = new Camera(overlay);
         listener = new NativeEventListener(overlay, camera);
+
+        export.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                exportToHtml();
+            }
+        });
+
     }
 
     private void reindex(){
@@ -116,7 +130,7 @@ public class MainController implements Initializable {
                     e.printStackTrace();
                 }
 
-                listener.onGifGenerated(new DirtyCallback<String>() {
+                listener.onGifGenerated(new Callback1<String>() {
                     @Override
                     public void call(String arg0) {
                         s.setImage(arg0);
@@ -126,5 +140,33 @@ public class MainController implements Initializable {
             }
         });
 
+        s.onDeleteRequest(new EmptyCallback() {
+            @Override
+            public void call() {
+                reindex();
+                steps.remove(s);
+                stepsContainer.getChildren().remove(s.getPosition()-1);
+                reindex();
+            }
+        });
+    }
+
+
+    private void exportToHtml(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Scenario scenario = new Scenario(
+                        title.getText(),
+                        author.getText(),
+                        description.getText(),
+                        data.getText(),
+                        steps
+                );
+
+                HtmlExporter exporter = new HtmlExporter(System.getProperty("user.home")+"/scenarii");
+                exporter.export(scenario);
+            }
+        }).start();
     }
 }

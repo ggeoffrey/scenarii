@@ -7,3 +7,9 @@
     -fx-opacity: 1;
 }
 */
+
+.root {
+    -fx-base: rgb(65, 65, 65);
+    -fx-background: rgb(65, 65, 65);
+    -fx-control-inner-background:  rgb(100, 100, 100);
+}

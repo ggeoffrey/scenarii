@@ -1,4 +1,5 @@
 *.class
+raw_res/*.jar
 *.log
 **/*/.DS_Store
 .DS_Store

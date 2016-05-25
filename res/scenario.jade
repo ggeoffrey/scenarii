@@ -1,0 +1,29 @@
+doctype transitional
+html
+    head
+        title= title + "  Scenario"
+        style
+            include scenario.css
+    body
+        h1.title= title
+        h3.author by:&nbsp;
+            span= author
+
+        div.description-wrapper
+            h4 Description
+            p.description!= description
+
+        div.data-wrapper
+            h4 Data
+            p.data!= data
+
+        div.steps
+            for step in steps
+                div.step
+                    div.number #{step.position}
+                    div.gif-wrapper
+                        image.gif(src="./sc-images/#{step.gif}")
+
+
+    script(type="text/javascript")
+        include scenario.js
