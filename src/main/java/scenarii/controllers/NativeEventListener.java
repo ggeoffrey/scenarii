@@ -7,7 +7,11 @@ import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
+import scenarii.geometry.*;
 import scenarii.overlay.Overlay;
+
+import java.awt.*;
+import scenarii.geometry.Point;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -57,11 +61,21 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
         mousePosition = nativeMouseEvent;
 
+
         if(ctrlKey){
-            final double xo = mouseOrigin.getX();
-            final double yo = mouseOrigin.getY();
-            final double xc = nativeMouseEvent.getX();
-            final double yc = nativeMouseEvent.getY();
+            Point overlayPostion = overlay.getPosition();
+            Point center = new Point(overlay.getCenter());
+            center.translate(
+                    (int) overlayPostion.getX(),
+                    (int) overlayPostion.getY()
+            );
+            Point mouse = new Point(nativeMouseEvent.getX(), nativeMouseEvent.getY());
+            //mouse.relativeTo(center);
+
+            final double xo = center.getX();
+            final double yo = center.getY();
+            final double xc = mouse.getX();
+            final double yc = mouse.getY();
 
             if(!isResizing) {
                 isResizing = true;

@@ -31,6 +31,20 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 800, 600));
 
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                try {
+                    GlobalScreen.unregisterNativeHook();
+                } catch (NativeHookException e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    Platform.exit();
+                }
+            }
+        });
     }
 
     @Override

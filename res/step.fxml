@@ -47,12 +47,12 @@
          <children>
             <ChoiceBox prefWidth="150.0" styleClass="action-type" />
             <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <FontAwesomeIconView glyphName="ARROW_CIRCLE_UP" size="2em" style="-fx-fill: white;">
+            <FontAwesomeIconView glyphName="ARROW_CIRCLE_UP" size="2em" style="-fx-fill: white;" styleClass="up">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </FontAwesomeIconView>
-            <FontAwesomeIconView glyphName="ARROW_CIRCLE_DOWN" size="2em" style="-fx-fill: white;">
+            <FontAwesomeIconView glyphName="ARROW_CIRCLE_DOWN" size="2em" style="-fx-fill: white;" styleClass="down">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

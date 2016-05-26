@@ -109,7 +109,7 @@ public class Recorder extends TimerTask {
                         new FileImageOutputStream(new File(lastImageProduced));
 
                 GifSequenceWriter writer =
-                        new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*3, true);
+                        new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*4, true);
 
                 this.buffer.forEach(new Consumer<BufferedImage>() {
                     @Override

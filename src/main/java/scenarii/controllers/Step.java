@@ -1,6 +1,7 @@
 package scenarii.controllers;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import de.neuland.jade4j.lexer.token.Call;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +37,8 @@ public class Step {
     private ImageView cameraIcon;
     private TextArea description;
 
+    private FontAwesomeIconView up;
+    private FontAwesomeIconView down;
     private FontAwesomeIconView trash;
 
     private File imageFile;
@@ -61,11 +64,15 @@ public class Step {
             cameraIcon = (ImageView) body.lookup(".camera-icon");
             description = (TextArea) body.lookup(".step-description");
 
+            up = (FontAwesomeIconView) body.lookup(".up");
+            down = (FontAwesomeIconView) body.lookup(".down");
             trash = (FontAwesomeIconView) body.lookup(".trash-button");
 
             positionText.setText(""+position);
 
             cameraIcon.setOpacity(1.);
+
+            description.setOnKeyPressed(new ClipBoardActionsHandler());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,6 +87,10 @@ public class Step {
     public void setPosition(int position) {
         this.position = position;
         positionText.setText(""+position);
+    }
+
+    public void setDescription(String s){
+        description.setText(s);
     }
 
     public HBox getBody() {
@@ -99,6 +110,10 @@ public class Step {
         gif.fitHeightProperty().bind(gifContainer.heightProperty());
     }
 
+    public File getImage(){
+        return this.imageFile;
+    }
+
 
     public void onShotRequest(EventHandler eventHandler){
         cameraIcon.setOnMouseClicked(eventHandler);
@@ -113,11 +128,29 @@ public class Step {
         });
     }
 
+    public void onMoveUpRequest(Callback1<Integer> callback){
+        up.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                callback.call(position);
+            }
+        });
+    }
+
+    public void onMoveDownRequest(Callback1<Integer> callback){
+        down.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                callback.call(position);
+            }
+        });
+    }
 
     public Map<String,Object> toJadeModel(PegDownProcessor parser){
         Map<String,Object> model = new HashMap<>();
 
         model.put("position", position);
+        model.put("rawDescription", description.getText().replaceAll("\\n","\\$br"));
         model.put("description", parser.markdownToHtml(description.getText()));
         if(imageFile != null)
             model.put("gif", imageFile.getName());

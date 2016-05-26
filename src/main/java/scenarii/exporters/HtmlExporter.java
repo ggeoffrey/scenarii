@@ -4,10 +4,15 @@ import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.JadeConfiguration;
 import de.neuland.jade4j.template.FileTemplateLoader;
 import de.neuland.jade4j.template.JadeTemplate;
+import scenarii.controllers.Step;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -38,11 +43,36 @@ public class HtmlExporter {
     }
 
     public void export(Scenario scenario){
+
+        mkdir(targetFolder);
+
+        final String name = scenario.getTitle().replaceAll("\\s","_");
+        final String path = targetFolder+"/"+name+"/";
+
+        mkdir(path);
+        final String resFolder  = path+"sc-images/";
+        mkdir(resFolder);
+
+
         String rendered = config.renderTemplate(template, scenario.getJadeModel());
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(targetFolder+"scenario.html"));
+            writer = new BufferedWriter(new FileWriter(path + name + ".html"));
             writer.write(rendered);
+
+            for (Step s : scenario.getSteps()){
+                File image = s.getImage();
+                if(image != null){
+                    try {
+                        Files.copy(
+                                Paths.get(image.getPath().replace("file:","")),
+                                Paths.get(new File(resFolder+image.getName()).getPath())
+                        );
+                    }
+                    catch (FileAlreadyExistsException alreadyExists){}
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,6 +83,17 @@ public class HtmlExporter {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+
+    private void mkdir(String path){
+        mkdir(new File(path));
+    }
+    private void mkdir(File file){
+        if(!file.exists()){
+            file.mkdir();
         }
     }
 }

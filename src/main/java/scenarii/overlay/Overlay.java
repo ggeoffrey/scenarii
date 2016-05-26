@@ -4,6 +4,7 @@ import org.jnativehook.mouse.NativeMouseEvent;
 
 
 import java.awt.*;
+import scenarii.geometry.Point;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -46,20 +47,17 @@ public class Overlay {
         bottom.hideForDistort();
     }
 
-
     public void distort(double xOrigin, double yOrigin, double xCurrent, double yCurrent){
 
-        double deltaX = computeDelta(xOrigin, xCurrent);
-        double deltaY = computeDelta(yOrigin, yCurrent);
+        double deltaX = Math.max(30., Point.scalarDistance(xOrigin, xCurrent)*2);
+        double deltaY = Math.max(30., Point.scalarDistance(yOrigin, yCurrent)*2);
 
-        if(deltaX > 2.5 || deltaX < -2.5){
-            top.alterWidth(deltaX);
-            bottom.alterWidth(deltaX);
-        }
-        if(deltaY > 2.5 || deltaY < -2.5){
-            top.alterHeight(deltaY);
-            bottom.alterHeight(deltaY);
-        }
+        top.setWidth(deltaX);
+        bottom.setWidth(deltaX);
+
+        top.setHeight(deltaY);
+        bottom.setHeight(deltaY);
+
         setPosition(xOrigin,yOrigin);
     }
 
@@ -69,19 +67,20 @@ public class Overlay {
     }
 
 
-    private double computeDelta(double origin, double current){
-        if(current < origin)
-            return - Math.log(origin - current);
-        else
-            return Math.log(current - origin);
-    }
-
     public Rectangle getRect(){
         return new Rectangle(
                 (int) top.getX(),
                 (int) top.getY(),
                 (int) top.getWidth(),
-                (int) top.getHeight() * 2 + 1);
+                (int) top.getHeight() * 2 + 4);
+    }
+
+    public Point getCenter(){
+        return new Point((int) top.getWidth()/2, (int) (top.getHeight()*2+4)/2);
+    }
+
+    public Point getPosition(){
+        return top.getPosition();
     }
 
 }

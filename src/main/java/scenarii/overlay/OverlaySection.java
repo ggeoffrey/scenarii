@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.geometry.Line;
+import scenarii.geometry.Point;
 
 import java.util.function.Consumer;
 
@@ -44,7 +45,7 @@ public class OverlaySection extends Stage {
         this.setScene(scene);
 
         this.setAlwaysOnTop(true);
-        this.initModality(Modality.APPLICATION_MODAL);
+        //this.initModality(Modality.APPLICATION_MODAL);
     }
 
     public void setPosition(NativeMouseEvent event){
@@ -54,9 +55,16 @@ public class OverlaySection extends Stage {
     public void setPosition(double x, double y){
         this.setX(x - this.getWidth()/2);
         if(displayMode == SectionOrientation.BOTTOM)
-            this.setY(y + 0.5);
+            this.setY(y + 2);
         else
-            this.setY(y - this.getHeight() - 0.5);
+            this.setY(y - this.getHeight() - 2);
+    }
+
+    public Point getPosition(){
+        return new Point(
+                (int) getX(),
+                (int) getY()
+        );
     }
 
     private void makeOverlay(AnchorPane root){
@@ -74,6 +82,8 @@ public class OverlaySection extends Stage {
         arc.setCenterY(0);
         arc.setStartAngle(190);
         arc.setLength(160);
+        arc.setPickOnBounds(false);
+        arc.setMouseTransparent(true);
         if(displayMode == SectionOrientation.TOP){
             arc.setCenterY(h.doubleValue());
             h.addListener(new ChangeListener<Number>() {
@@ -115,19 +125,6 @@ public class OverlaySection extends Stage {
     }
 
 
-    public void alterWidth(double value){
-        double delta = this.getWidth() + value;
-        if(delta >= 60){
-            this.setWidth(delta);
-        }
-    }
-
-    public void alterHeight(double value){
-        double delta = this.getHeight() + value;
-        if(delta >= 30){
-            this.setHeight(delta);
-        }
-    }
 
     public void showForDistort(){
         leftLine.setVisible(true);

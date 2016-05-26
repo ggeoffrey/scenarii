@@ -18,10 +18,11 @@
         <items>
             <HBox fillHeight="false" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="782.0">
                <children>
-                <Button fx:id="export" mnemonicParsing="false" text="Export" />
-                  <Button fx:id="exportTo" mnemonicParsing="false" text="Export to…" />
-                  <Button fx:id="compress" mnemonicParsing="false" text="Compress" />
-                  <HBox prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                   <Button fx:id="open" mnemonicParsing="false" text="Import" />
+                   <Button fx:id="export" mnemonicParsing="false" text="Export" disable="true"/>
+                   <Button fx:id="exportTo" mnemonicParsing="false" text="Export to…"  disable="true"/>
+                   <Button fx:id="compress" mnemonicParsing="false" text="Compress"  disable="true" />
+                   <HBox prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                   <ProgressIndicator prefHeight="29.0" prefWidth="29.0" progress="0.0" />
                </children>
             </HBox>
