@@ -4,6 +4,7 @@ import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.JadeConfiguration;
 import de.neuland.jade4j.template.FileTemplateLoader;
 import de.neuland.jade4j.template.JadeTemplate;
+import javafx.scene.control.ProgressIndicator;
 import scenarii.controllers.Step;
 
 import java.io.BufferedWriter;
@@ -42,16 +43,24 @@ public class HtmlExporter {
         }
     }
 
-    public void export(Scenario scenario){
+    public void export(Scenario scenario, ProgressIndicator progressIndicator) {
+
+        int steps = 3 + 1 + scenario.getSteps().size();
+        progressIndicator.setProgress(percent(0,steps));
 
         mkdir(targetFolder);
+
+        progressIndicator.setProgress(percent(1,steps));
 
         final String name = scenario.getTitle().replaceAll("\\s","_");
         final String path = targetFolder+"/"+name+"/";
 
         mkdir(path);
+        progressIndicator.setProgress(percent(2,steps));
+
         final String resFolder  = path+"sc-images/";
         mkdir(resFolder);
+        progressIndicator.setProgress(percent(3,steps));
 
 
         String rendered = config.renderTemplate(template, scenario.getJadeModel());
@@ -60,6 +69,8 @@ public class HtmlExporter {
             writer = new BufferedWriter(new FileWriter(path + name + ".html"));
             writer.write(rendered);
 
+            progressIndicator.setProgress(percent(4,steps));
+            int currentStep = 4;
             for (Step s : scenario.getSteps()){
                 File image = s.getImage();
                 if(image != null){
@@ -71,6 +82,8 @@ public class HtmlExporter {
                     }
                     catch (FileAlreadyExistsException alreadyExists){}
                 }
+                currentStep++;
+                progressIndicator.setProgress(percent(currentStep,steps));
             }
 
         } catch (IOException e) {
@@ -84,6 +97,7 @@ public class HtmlExporter {
                 e.printStackTrace();
             }
         }
+
     }
 
 
@@ -100,5 +114,11 @@ public class HtmlExporter {
         if(!file.exists()){
             file.mkdir();
         }
+    }
+
+
+
+    private double percent(int pos, int goal){
+        return (double) ((pos / goal) * pos);
     }
 }

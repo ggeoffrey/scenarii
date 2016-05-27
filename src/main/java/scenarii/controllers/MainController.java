@@ -1,29 +1,18 @@
 package scenarii.controllers;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.jnativehook.GlobalScreen;
@@ -86,6 +75,9 @@ public class MainController implements Initializable {
     @FXML
     private Button addStep;
 
+    @FXML
+    private ProgressIndicator progress;
+
     private ArrayList<Step> steps;
 
 
@@ -97,7 +89,7 @@ public class MainController implements Initializable {
     private NativeEventListener listener;
 
 
-    private BooleanProperty validNames;
+    private BooleanProperty invalidName;
     private BooleanProperty targetFolderPresent;
     private BooleanBinding exportAvailable;
     private BooleanBinding canExportOrCompress;
@@ -105,13 +97,13 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        validNames = new SimpleBooleanProperty(false);
+        invalidName = new SimpleBooleanProperty(false);
         targetFolderPresent = new SimpleBooleanProperty(false);
 
         exportAvailable = title.textProperty()
                 .isEmpty()
                 .or(author.textProperty().isEmpty())
-                .or(validNames);
+                .or(invalidName);
 
         canExportOrCompress = exportAvailable.or(targetFolderPresent.not());
 
@@ -120,11 +112,11 @@ public class MainController implements Initializable {
             public void handle(KeyEvent event) {
                 String text = title.getText();
                 if(!FileUtils.isFilenameValid(text)){
-                    validNames.setValue(true);
+                    invalidName.setValue(true);
                     title.setStyle("-fx-text-fill: #ff4b41;");
                 }
                 else{
-                    validNames.setValue(false);
+                    invalidName.setValue(false);
                     title.setStyle("-fx-text-fill: white;");
                 }
 
@@ -311,8 +303,21 @@ public class MainController implements Initializable {
 
     private void compress(){
         if(canExportOrCompress.not().get()){
+            progress.setProgress(-1.);
+            invalidName.setValue(true);
+
             String path = targetFolder+"/"+title.getText();
             ZipUtil.pack(new File(path), new File(path+".zip"), Deflater.BEST_COMPRESSION);
+
+            progress.setProgress(1.);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    invalidName.setValue(false);
+                    canExportOrCompress.invalidate();
+                }
+            });
+
         }
     }
 
@@ -331,7 +336,12 @@ public class MainController implements Initializable {
                     );
                     System.out.println(targetFolder.getAbsolutePath());
                     HtmlExporter exporter = new HtmlExporter(targetFolder.getAbsolutePath());
-                    exporter.export(scenario);
+
+                    invalidName.setValue(true);
+
+                    exporter.export(scenario, progress); // <++++++++
+
+                    invalidName.setValue(false);
                 }
             }
         }).start();
