@@ -24,10 +24,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.SwingDispatchService;
+import org.zeroturnaround.zip.ZipUtil;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
@@ -41,6 +43,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.zip.Deflater;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -89,17 +92,28 @@ public class MainController implements Initializable {
     private Overlay overlay;
     private Camera camera;
 
+    private File targetFolder;
+
     private NativeEventListener listener;
+
+
+    private BooleanProperty validNames;
+    private BooleanProperty targetFolderPresent;
+    private BooleanBinding exportAvailable;
+    private BooleanBinding canExportOrCompress;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        BooleanProperty validNames = new SimpleBooleanProperty();
+        validNames = new SimpleBooleanProperty(false);
+        targetFolderPresent = new SimpleBooleanProperty(false);
 
-        BooleanBinding binding = title.textProperty()
+        exportAvailable = title.textProperty()
                 .isEmpty()
                 .or(author.textProperty().isEmpty())
                 .or(validNames);
+
+        canExportOrCompress = exportAvailable.or(targetFolderPresent.not());
 
         title.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
@@ -118,9 +132,9 @@ public class MainController implements Initializable {
         });
 
 
-        export.disableProperty().bind(binding);
-        exportTo.disableProperty().bind(binding);
-        compress.disableProperty().bind(binding);
+        export.disableProperty().bind(canExportOrCompress);
+        exportTo.disableProperty().bind(exportAvailable);
+        compress.disableProperty().bind(canExportOrCompress);
 
         steps = new ArrayList<>();
         addStep();
@@ -163,6 +177,31 @@ public class MainController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 exportToHtml();
+            }
+        });
+
+        exportTo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Export to folder…");
+                File folder = directoryChooser.showDialog(root.getScene().getWindow());
+
+                if(folder != null){
+                    if(!folder.exists()){
+                        folder.mkdir();
+                    }
+                    targetFolder = folder;
+                    targetFolderPresent.setValue(true);
+                    exportToHtml();
+                }
+            }
+        });
+
+        compress.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                compress();
             }
         });
 
@@ -270,20 +309,30 @@ public class MainController implements Initializable {
     }
 
 
+    private void compress(){
+        if(canExportOrCompress.not().get()){
+            String path = targetFolder+"/"+title.getText();
+            ZipUtil.pack(new File(path), new File(path+".zip"), Deflater.BEST_COMPRESSION);
+        }
+    }
+
     private void exportToHtml(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Scenario scenario = new Scenario(
-                        title.getText(),
-                        author.getText(),
-                        description.getText(),
-                        data.getText(),
-                        steps
-                );
+                if(targetFolder != null && targetFolder.exists()){
 
-                HtmlExporter exporter = new HtmlExporter(System.getProperty("user.home")+"/scenarii");
-                exporter.export(scenario);
+                    Scenario scenario = new Scenario(
+                            title.getText(),
+                            author.getText(),
+                            description.getText(),
+                            data.getText(),
+                            steps
+                    );
+                    System.out.println(targetFolder.getAbsolutePath());
+                    HtmlExporter exporter = new HtmlExporter(targetFolder.getAbsolutePath());
+                    exporter.export(scenario);
+                }
             }
         }).start();
     }

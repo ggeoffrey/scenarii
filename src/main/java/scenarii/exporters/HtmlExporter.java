@@ -89,9 +89,14 @@ public class HtmlExporter {
 
 
     private void mkdir(String path){
-        mkdir(new File(path));
+        mkdir(new File(path), false);
     }
-    private void mkdir(File file){
+
+    private void mkdir(String path, boolean overwrite){
+        mkdir(new File(path), overwrite);
+    }
+
+    private void mkdir(File file, boolean overwrite){
         if(!file.exists()){
             file.mkdir();
         }
