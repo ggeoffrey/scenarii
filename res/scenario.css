@@ -36,6 +36,8 @@ html, body{  max-width: 100%;
   border-bottom: 1px gray solid;
   display: table-cell;
   vertical-align: middle;
+  text-align: center;
+  transition: 0.4s all;
 }
 
 .step .gif-wrapper .gif {
@@ -46,16 +48,16 @@ html, body{  max-width: 100%;
   vertical-align: middle;
 }
 
-.step .gif-wrapper:hover .gif{
+.step .gif-wrapper:hover .gif, .step .gif-wrapper .gif:hover{
   /*transform: scale(3);
   position: absolute;
   transition: all 0.4s;
   z-index: 2;
   */
   position: absolute;
-  margin-left: 100vh;
+  margin-left: 10vh;
   z-index: 2;
-  transform: translateY(-50%) scale(3);
+  transform: translate(50%,-50%) scale(3);
   transition: 0.4s all;
 }
 

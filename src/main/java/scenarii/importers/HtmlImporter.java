@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Created by geoffrey on 26/05/2016.
  */
 public class HtmlImporter {
+
     public static Scenario load(File htmlFile){
         Scenario sc = null;
         try {
@@ -36,6 +37,7 @@ public class HtmlImporter {
             for(Element e : domSteps){
                 Step s = new Step();
                 s.setPosition(i);
+                s.setImage(htmlFile.getParentFile().getPath()+"/"+e.select(".gif").attr("src"));
                 String stepDescription = e.select(".raw-description").first().text().replaceAll("\\$br","\n");
                 s.setDescription(stepDescription);
                 steps.add(s);

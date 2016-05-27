@@ -243,6 +243,15 @@ public class MainController implements Initializable {
                     @Override
                     public void call(String arg0) {
                         s.setImage(arg0);
+
+                        try {
+                            GlobalScreen.removeNativeKeyListener(listener);
+                            GlobalScreen.removeNativeMouseMotionListener(listener);
+                            GlobalScreen.unregisterNativeHook();
+                        }
+                        catch (NativeHookException e){
+                            e.printStackTrace();
+                        }
                     }
                 });
 

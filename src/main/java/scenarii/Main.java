@@ -47,12 +47,6 @@ public class Main extends Application {
         });
     }
 
-    @Override
-    public void stop() throws Exception {
-        GlobalScreen.unregisterNativeHook();
-        super.stop();
-    }
-
 
     public static void main(final String[] args) {
         launch(args);

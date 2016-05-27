@@ -34,15 +34,7 @@ public class Recorder extends TimerTask {
     public Recorder(Overlay overlay, int delay) {
         this.uniqueName = new Date().getTime();
 
-        String path = System.getProperty("user.home")+"/scenarii-snaps/";
-        File folder = new File(path);
-        if(!folder.exists()){
-            folder.mkdir();
-        }
-        this.folderPath = path + this.uniqueName;
-        new File(this.folderPath).mkdir();
-
-
+        mkdir();
 
         this.overlay = overlay;
         this.delay = delay;
@@ -59,6 +51,21 @@ public class Recorder extends TimerTask {
         if(shouldRun){
             shot();
         }
+    }
+
+    private void mkdir(){
+        String path = System.getProperty("user.home")+"/scenarii-snaps/";
+        File folder = new File(path);
+        if(!folder.exists()){
+            folder.mkdir();
+        }
+        this.folderPath = path + this.uniqueName;
+
+        File snapsFolder = new File(this.folderPath);
+
+        if(!snapsFolder.exists())
+            snapsFolder.mkdir();
+
     }
 
     private void shot(){
@@ -103,6 +110,8 @@ public class Recorder extends TimerTask {
     protected void exportShot(){
         if(buffer.size() > 0){
             try {
+
+                mkdir();
 
                 lastImageProduced = this.folderPath+"/shot-"+shotCounter+".gif";
                 ImageOutputStream output =
@@ -151,7 +160,7 @@ public class Recorder extends TimerTask {
     }
 
     public String getLastImageProduced(){
-        return "file:"+lastImageProduced;
+        return lastImageProduced;
     }
 
 }

@@ -1,6 +1,7 @@
 package scenarii.controllers;
 
 import javafx.application.Platform;
+import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
@@ -122,7 +123,12 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+        for (int i = 0; i < 100; i++){
+            System.out.println(nativeKeyEvent.getKeyCode());
+        }
+
         switch (nativeKeyEvent.getKeyCode()){
+
             case 1: // ESC
                 if(state != State.IDLE){
                     Platform.runLater(new Runnable() {
@@ -158,10 +164,6 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                         }
                     });
                     camera.startRecord();
-                }
-            default:
-                for (int i = 0; i < 100; i++){
-                    System.out.println(nativeKeyEvent.getKeyCode());
                 }
                 break;
         }

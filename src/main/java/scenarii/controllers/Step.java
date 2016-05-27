@@ -103,11 +103,13 @@ public class Step {
 
     public void setImage(String path){
         imageFile = new File(path);
-        Image image = new Image(path);
-        gif.setImage(image);
-        cameraIcon.setOpacity(0.);
-        gif.fitWidthProperty().bind(gifContainer.widthProperty());
-        gif.fitHeightProperty().bind(gifContainer.heightProperty());
+        if(imageFile.exists() && imageFile.isFile()){
+            Image image = new Image("file:"+path);
+            gif.setImage(image);
+            cameraIcon.setOpacity(0.);
+            gif.fitWidthProperty().bind(gifContainer.widthProperty());
+            gif.fitHeightProperty().bind(gifContainer.heightProperty());
+        }
     }
 
     public File getImage(){
