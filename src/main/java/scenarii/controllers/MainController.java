@@ -218,7 +218,7 @@ public class MainController implements Initializable {
         addStep(new Step(steps.size()+1));
     }
 
-    private void addStep(Step s){
+    private void addStep(final Step s){
         steps.add(s);
         stepsContainer.getChildren().add(s.getBody());
         Platform.runLater(new Runnable() {

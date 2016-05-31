@@ -117,7 +117,7 @@ public class Recorder extends TimerTask {
                 ImageOutputStream output =
                         new FileImageOutputStream(new File(lastImageProduced));
 
-                GifSequenceWriter writer =
+                final GifSequenceWriter writer =
                         new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*4, true);
 
                 this.buffer.forEach(new Consumer<BufferedImage>() {

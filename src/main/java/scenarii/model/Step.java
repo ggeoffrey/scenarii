@@ -90,7 +90,7 @@ public class Step {
             actions.setItems(FXCollections.observableArrayList(ActionType.values()));
             actions.setValue(ActionType.NOACTION);
 
-            ChangeListener<String> listener = new ChangeListener<String>() {
+            final ChangeListener<String> listener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
@@ -172,7 +172,7 @@ public class Step {
         cameraIcon.setOnMouseClicked(eventHandler);
     }
 
-    public void onDeleteRequest(EmptyCallback callback){
+    public void onDeleteRequest(final EmptyCallback callback){
         trash.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -181,7 +181,7 @@ public class Step {
         });
     }
 
-    public void onMoveUpRequest(Callback1<Integer> callback){
+    public void onMoveUpRequest(final Callback1<Integer> callback){
         up.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -190,7 +190,7 @@ public class Step {
         });
     }
 
-    public void onMoveDownRequest(Callback1<Integer> callback){
+    public void onMoveDownRequest(final Callback1<Integer> callback){
         down.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
