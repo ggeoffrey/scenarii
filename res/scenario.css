@@ -1,5 +1,5 @@
 body{
-  background-color: white;
+  background-color: orange  ;
 }
 
 html, body{  max-width: 100%;
@@ -78,4 +78,4 @@ html, body{  max-width: 100%;
 .hidden{
   display:none;
 }
-    
+

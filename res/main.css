@@ -9,7 +9,11 @@
 */
 
 .root {
-    -fx-base: rgb(65, 65, 65);
-    -fx-background: rgb(65, 65, 65);
-    -fx-control-inner-background:  rgb(100, 100, 100);
+    -fx-base: #414141;
+    -fx-background: #414141;
+    -fx-control-inner-background: #646464;
+}
+
+.global {
+    -fx-background-color: #414141;
 }

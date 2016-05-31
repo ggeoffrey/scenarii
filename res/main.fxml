@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="/res/main.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scenarii.controllers.MainController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scenarii.controllers.MainController">
    <top>
       <ToolBar prefHeight="17.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <items>
-            <HBox fillHeight="false" maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="782.0">
+            <HBox alignment="BOTTOM_LEFT" fillHeight="false" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="782.0">
                <children>
                    <Button fx:id="open" mnemonicParsing="false" text="Import" />
                    <Button fx:id="export" disable="true" mnemonicParsing="false" text="Export" />
@@ -32,7 +32,7 @@
       </ToolBar>
    </top>
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="global" BorderPane.alignment="CENTER">
          <center>
             <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
                <content>
@@ -41,9 +41,9 @@
             </ScrollPane>
          </center>
          <top>
-            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <HBox prefHeight="100.0" prefWidth="200.0" styleClass="global" BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass=".global" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Title :" />
                         <TextField fx:id="title">
