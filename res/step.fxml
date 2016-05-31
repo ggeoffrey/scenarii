@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -19,11 +18,7 @@
    <children>
       <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="150.0" prefWidth="250.0" styleClass="gif-container" HBox.hgrow="ALWAYS">
          <children>
-            <ImageView pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER">
-               <image>
-                  <Image url="@../shots/shot-0-33.gif" />
-               </image>
-            </ImageView>
+            <ImageView pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER" />
             <ImageView fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" styleClass="camera-icon">
                <image>
                   <Image url="@camera.png" />
@@ -44,28 +39,38 @@
             </StackPane>
          </children>
       </StackPane>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+      <VBox alignment="CENTER" prefHeight="150.0" prefWidth="32.0">
          <children>
             <HBox prefHeight="50.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <FontAwesomeIconView glyphName="ARROW_CIRCLE_UP" size="2em" style="-fx-fill: white;" styleClass="up">
+            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="up">
+               <image>
+                  <Image url="@arr_up.png" />
+               </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </FontAwesomeIconView>
-            <FontAwesomeIconView glyphName="ARROW_CIRCLE_DOWN" size="2em" style="-fx-fill: white;" styleClass="down">
+            </ImageView>
+            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="down">
+               <image>
+                  <Image url="@arr_down.png" />
+               </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </FontAwesomeIconView>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
-            <FontAwesomeIconView glyphName="TRASH" size="2em" style="-fx-fill: white;" styleClass="trash-button">
+            </ImageView>
+            <HBox prefHeight="95.0" prefWidth="62.0" VBox.vgrow="ALWAYS" />
+            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="trash-button">
+               <image>
+                  <Image url="@trash.png" />
+               </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </FontAwesomeIconView>
+            </ImageView>
             <HBox prefHeight="50.0" prefWidth="200.0" />
          </children>
       </VBox>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="10.0" HBox.hgrow="ALWAYS" />
       <VBox HBox.hgrow="ALWAYS">
          <children>
             <Label text="Description :" />

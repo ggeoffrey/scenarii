@@ -1,14 +1,10 @@
 package scenarii.model;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import de.neuland.jade4j.lexer.token.Call;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -46,9 +42,9 @@ public class Step {
     private ChoiceBox<ActionType> actions;
     private TextField optionalData;
 
-    private FontAwesomeIconView up;
-    private FontAwesomeIconView down;
-    private FontAwesomeIconView trash;
+    private ImageView up;
+    private ImageView down;
+    private ImageView trash;
 
     private File imageFile;
 
@@ -75,9 +71,9 @@ public class Step {
 
             actions = (ChoiceBox<ActionType>) body.lookup(".action-type");
             optionalData = (TextField) body.lookup(".step-data");
-            up = (FontAwesomeIconView) body.lookup(".up");
-            down = (FontAwesomeIconView) body.lookup(".down");
-            trash = (FontAwesomeIconView) body.lookup(".trash-button");
+            up = (ImageView) body.lookup(".up");
+            down = (ImageView) body.lookup(".down");
+            trash = (ImageView) body.lookup(".trash-button");
 
             positionText.setText(""+position);
 
