@@ -1,8 +1,8 @@
 package scenarii.camera;
 
+import scenarii.dirtycallbacks.Callback1;
 import javafx.scene.Node;
 
-import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -70,11 +70,11 @@ public class Buffer<T> {
         size = 0;
     }
 
-    public void forEach(Consumer<T> consumer){
+    public void forEach(Callback1<T> consumer){
         if(size > 0){
             Node n = tail;
             while (n != null){
-                consumer.accept(n.content);
+                consumer.call(n.content);
                 n = n.previous;
             }
         }

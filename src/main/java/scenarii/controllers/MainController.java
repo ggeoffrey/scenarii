@@ -102,8 +102,8 @@ public class MainController implements Initializable {
         targetFolderPresent = new SimpleBooleanProperty(false);
 
         exportAvailable = title.textProperty()
-                .isEmpty()
-                .or(author.textProperty().isEmpty())
+                .isEqualTo("")
+                .or(author.textProperty().isEqualTo(""))
                 .or(invalidName);
 
         canExportOrCompress = exportAvailable.or(targetFolderPresent.not());

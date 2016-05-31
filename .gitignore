@@ -7,3 +7,8 @@ raw_res/*.jar
 shots/
 target/
 .idea
+/bin/
+
+
+.project
+.classpath

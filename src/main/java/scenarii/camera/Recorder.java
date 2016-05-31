@@ -1,16 +1,17 @@
 package scenarii.camera;
 
+import scenarii.dirtycallbacks.Callback1;
 import scenarii.overlay.Overlay;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -120,16 +121,16 @@ public class Recorder extends TimerTask {
                 final GifSequenceWriter writer =
                         new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*4, true);
 
-                this.buffer.forEach(new Consumer<BufferedImage>() {
-                    @Override
-                    public void accept(BufferedImage bufferedImage) {
-                        try {
+                this.buffer.forEach(new Callback1<BufferedImage>() {
+					@Override
+					public void call(BufferedImage bufferedImage) {
+						try {
                             writer.writeToSequence(bufferedImage);
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }
-                    }
-                });
+                        }						
+					}
+				});
 
 
             } catch (IOException e) {

@@ -15,8 +15,6 @@ import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.geometry.Line;
 import scenarii.geometry.Point;
 
-import java.util.function.Consumer;
-
 /**
  * Created by geoffrey on 22/05/2016.
  */
@@ -38,14 +36,14 @@ public class OverlaySection extends Stage {
 
         root = new AnchorPane();
         makeOverlay(root);
-        root.setBackground(null);
+        //root.setBackground(null);
 
         Scene scene = new Scene(root, 150, 75);
         scene.setFill(null);
         this.setScene(scene);
 
-        this.setAlwaysOnTop(true);
-        //this.initModality(Modality.APPLICATION_MODAL);
+        //this.setAlwaysOnTop(true);
+        this.initModality(Modality.APPLICATION_MODAL);
     }
 
     public void setPosition(NativeMouseEvent event){
