@@ -2,15 +2,13 @@ package scenarii.exporters;
 
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.JadeConfiguration;
-import de.neuland.jade4j.template.FileTemplateLoader;
 import de.neuland.jade4j.template.JadeTemplate;
 import javafx.scene.control.ProgressIndicator;
-import scenarii.controllers.Step;
+import scenarii.exporters.jade4j.FileTemplateLoader;
+import scenarii.model.Step;
+import scenarii.model.Scenario;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,14 +28,29 @@ public class HtmlExporter {
         config = new JadeConfiguration();
         config.setPrettyPrint(true);
         config.setMode(Jade4J.Mode.XHTML);
-        config.setTemplateLoader(new FileTemplateLoader(
+        String path = FileUtils.getCleanFilePath("/res/");
+        //String cssPath = FileUtils.getCleanFilePath("/res/scenario.css");
+        //String jsPath = FileUtils.getCleanFilePath("/res/scenario.js");
+
+        //String template = new StringReader(new File(path));
+        /*config.setTemplateLoader(new FileTemplateLoader(
                 getClass()
                 .getResource("/res/")
-                        .toString().replace("file:",""),
+                        .toString().replace("file:","")
+                                    .replace("jar:",""),
                 "UTF-8"));
 
+        */
+        config.setTemplateLoader(new FileTemplateLoader("/res/", "UTF-8"));
         try {
-            template = config.getTemplate("scenario");
+            //String templateText = FileUtils.readFileAsString(path);
+            //String styleText = FileUtils.readFileAsString(cssPath);
+            //String jsText = FileUtils.readFileAsString(jsPath);
+
+            //TemplateLoader loader = new ReaderTemplateLoader(new StringReader(templateText), "scenario.jade");
+
+            //config.setTemplateLoader(loader);
+            this.template = config.getTemplate("scenario");
         } catch (IOException e) {
             e.printStackTrace();
         }

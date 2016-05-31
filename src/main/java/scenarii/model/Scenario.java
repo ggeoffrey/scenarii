@@ -1,7 +1,6 @@
-package scenarii.exporters;
+package scenarii.model;
 
 import org.pegdown.PegDownProcessor;
-import scenarii.controllers.Step;
 
 import java.util.*;
 

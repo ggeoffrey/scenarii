@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -45,8 +46,7 @@
       </StackPane>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <ChoiceBox prefWidth="150.0" styleClass="action-type" />
-            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <HBox prefHeight="50.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <FontAwesomeIconView glyphName="ARROW_CIRCLE_UP" size="2em" style="-fx-fill: white;" styleClass="up">
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -63,12 +63,19 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </FontAwesomeIconView>
+            <HBox prefHeight="50.0" prefWidth="200.0" />
          </children>
       </VBox>
       <VBox HBox.hgrow="ALWAYS">
          <children>
             <Label text="Description :" />
             <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" />
+            <HBox prefHeight="32.0" prefWidth="575.0">
+               <children>
+                  <ChoiceBox prefWidth="150.0" styleClass="action-type" />
+                  <TextField editable="false" promptText="Optional data" styleClass="step-data" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>

@@ -24,8 +24,9 @@ import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
-import scenarii.exporters.Scenario;
+import scenarii.model.Scenario;
 import scenarii.importers.HtmlImporter;
+import scenarii.model.Step;
 import scenarii.overlay.Overlay;
 
 import java.io.File;

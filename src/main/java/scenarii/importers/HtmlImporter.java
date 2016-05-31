@@ -4,8 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import scenarii.controllers.Step;
-import scenarii.exporters.Scenario;
+import scenarii.model.Step;
+import scenarii.model.Scenario;
 
 import java.io.File;
 import java.io.IOException;
