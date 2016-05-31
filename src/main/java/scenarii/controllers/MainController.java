@@ -97,6 +97,8 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    	
+    	root.getStylesheets().add("/res/main.css");
 
         invalidName = new SimpleBooleanProperty(false);
         targetFolderPresent = new SimpleBooleanProperty(false);

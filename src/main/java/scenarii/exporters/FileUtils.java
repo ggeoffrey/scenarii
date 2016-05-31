@@ -34,7 +34,8 @@ public class FileUtils {
                 .toString()
                 .replaceAll("file:","")
                 .replaceAll("jar:","")
-                .replaceAll("!/", "");
+                .replaceAll("!/", "/")
+                ;
     }
 
 }
