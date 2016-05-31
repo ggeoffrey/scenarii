@@ -32,7 +32,7 @@ public class Scenario {
 
 
     public Map<String, Object> getJadeModel(){
-        Map<String, Object> model = new HashMap<>();
+        Map<String, Object> model = new HashMap<String, Object>();
 
         model.put("title",title);
 
@@ -48,7 +48,7 @@ public class Scenario {
 
 
     private LinkedList<Map<String,Object>> stepsToJadeModel(List<Step> steps){
-        LinkedList<Map<String,Object>> models = new LinkedList<>();
+        LinkedList<Map<String,Object>> models = new LinkedList<Map<String,Object>>();
         for (Step s : steps){
             models.add(s.toJadeModel(parser));
         }

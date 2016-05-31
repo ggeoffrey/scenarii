@@ -200,7 +200,7 @@ public class Step {
     }
 
     public Map<String,Object> toJadeModel(PegDownProcessor parser){
-        Map<String,Object> model = new HashMap<>();
+        Map<String,Object> model = new HashMap<String,Object>();
 
         model.put("position", position);
         model.put("rawDescription", description.getText().replaceAll("\\n","\\$br"));

@@ -129,7 +129,7 @@ public class MainController implements Initializable {
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
 
-        steps = new ArrayList<>();
+        steps = new ArrayList<Step>();
         addStep();
         addStep.setOnAction(new EventHandler<ActionEvent>() {
             @Override
