@@ -20,4 +20,5 @@
 
 #topBarWrapper{
     -fx-padding: 1em 0;
+    -fx-pref-height: 120;
 }
