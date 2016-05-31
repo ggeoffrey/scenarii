@@ -16,7 +16,7 @@
    <top>
       <ToolBar prefHeight="17.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <items>
-            <HBox id="topBarWrapper" alignment="BOTTOM_LEFT" fillHeight="false" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="782.0">
+            <HBox id="topBarWrapper" alignment="BOTTOM_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="782.0">
                <children>
                    <Button fx:id="open" mnemonicParsing="false" text="Import" />
                    <Button fx:id="export" disable="true" mnemonicParsing="false" text="Export" />
