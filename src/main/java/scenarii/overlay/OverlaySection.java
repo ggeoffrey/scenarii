@@ -1,9 +1,12 @@
 package scenarii.overlay;
 
+import javafx.application.Platform;
+import java.lang.reflect.Method;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -11,7 +14,11 @@ import javafx.scene.shape.Arc;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import org.jnativehook.mouse.NativeMouseEvent;
+
+import com.sun.javafx.application.PlatformImpl;
+
 import scenarii.geometry.Line;
 import scenarii.geometry.Point;
 
@@ -20,6 +27,8 @@ import scenarii.geometry.Point;
  */
 public class OverlaySection extends Stage {
 
+	public Method alwaysOnTop = null;
+	
     private SectionOrientation displayMode;
     private AnchorPane root;
 
@@ -31,19 +40,49 @@ public class OverlaySection extends Stage {
 
     public OverlaySection(SectionOrientation orientation) {
         super(StageStyle.TRANSPARENT);
+        this.initModality(Modality.APPLICATION_MODAL);
+        
+        try{
+			alwaysOnTop = OverlaySection.class.getMethod("setAlwaysOnTop", boolean.class);
+			 if(alwaysOnTop != null){
+				 alwaysOnTop.invoke(this, true);		        	
+		     }
+        }
+		catch(Exception e){}
+       
+        
 
         this.displayMode = orientation;
 
         root = new AnchorPane();
         makeOverlay(root);
-        //root.setBackground(null);
+        root.setStyle("-fx-background-color: TRANSPARENT;");
 
         Scene scene = new Scene(root, 150, 75);
         scene.setFill(null);
         this.setScene(scene);
 
-        //this.setAlwaysOnTop(true);
-        this.initModality(Modality.APPLICATION_MODAL);
+        final Stage _this = this;
+        //super.setAlwaysOnTop(true);
+        this.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1,
+					final Boolean arg2) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						if(!arg2){
+							System.out.println("requesting");
+							_this.requestFocus();
+							_this.toFront();
+						}
+					}
+				});
+				
+			}
+		});
+        
     }
 
     public void setPosition(NativeMouseEvent event){
@@ -135,4 +174,6 @@ public class OverlaySection extends Stage {
         rightLine.setVisible(false);
         centerLine.setVisible(false);
     }
+   
+    
 }

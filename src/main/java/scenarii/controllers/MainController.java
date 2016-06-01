@@ -15,10 +15,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.SwingDispatchService;
 import org.zeroturnaround.zip.ZipUtil;
+
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
@@ -33,6 +36,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.zip.Deflater;
 
 /**
@@ -142,14 +148,15 @@ public class MainController implements Initializable {
 
         overlay = new Overlay();
         camera = new Camera(overlay);
-        listener = new NativeEventListener(overlay, camera);
+        listener = new NativeEventListener(overlay, camera, ((Stage) root.getScene().getWindow()));
 
+        
 
         open.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Import…");
+                fileChooser.setTitle("Importer...");
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file","*.html"));
                 File toImport = fileChooser.showOpenDialog(root.getScene().getWindow());
                 Scenario sc = HtmlImporter.load(toImport);
@@ -179,7 +186,7 @@ public class MainController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Export to folder…");
+                directoryChooser.setTitle("Export to folder...");
                 File folder = directoryChooser.showDialog(root.getScene().getWindow());
 
                 if(folder != null){
@@ -261,6 +268,7 @@ public class MainController implements Initializable {
         s.onShotRequest(new EventHandler() {
             @Override
             public void handle(Event event) {
+            	root.getScene().getWindow().hide();
                 overlay.show();
                 overlay.showForDistort();
                 listener.setState(State.RESIZING);
@@ -269,6 +277,9 @@ public class MainController implements Initializable {
                     GlobalScreen.setEventDispatcher(new SwingDispatchService());
                     GlobalScreen.addNativeMouseMotionListener(listener);
                     GlobalScreen.addNativeKeyListener(listener);
+                    LogManager.getLogManager().reset();
+                    Logger.getLogger(GlobalScreen.class.getPackage().getName())
+                    .setLevel(Level.WARNING);
                 } catch (NativeHookException e) {
                     e.printStackTrace();
                 }
@@ -277,7 +288,7 @@ public class MainController implements Initializable {
                     @Override
                     public void call(String arg0) {
                         s.setImage(arg0);
-
+                        
                         try {
                             GlobalScreen.removeNativeKeyListener(listener);
                             GlobalScreen.removeNativeMouseMotionListener(listener);

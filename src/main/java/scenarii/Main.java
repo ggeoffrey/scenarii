@@ -9,19 +9,23 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
+
+import com.sun.javafx.application.PlatformImpl;
 
 public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
 
-        //stage.initStyle(StageStyle.TRANSPARENT);
+    	//PlatformImpl.setTaskbarApplication(false);
 
         int w = 800;
         int h = 600;
 
+        
         BorderPane root = FXMLLoader.load(getClass().getResource("/res/main.fxml"));
         primaryStage.setScene(new Scene(root, w, h));
         primaryStage.setResizable(false);

@@ -1,17 +1,23 @@
 package scenarii.controllers;
 
 import javafx.application.Platform;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
+
+import de.neuland.jade4j.parser.node.Node;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
 import scenarii.geometry.*;
 import scenarii.overlay.Overlay;
 
-import java.awt.*;
+
 import scenarii.geometry.Point;
 
 /**
@@ -21,7 +27,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     private Overlay overlay;
     private Camera camera;
-
+    private Stage window;
 
     private boolean ctrlKey;
     private boolean altKey;
@@ -33,6 +39,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
 
     private State state;
+    private boolean shouldBeKeptOnFront;
 
     // Callbacks
 
@@ -42,13 +49,18 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
     //-----------
 
 
-    public NativeEventListener(Overlay overlay, Camera camera) {
+    public NativeEventListener(Overlay overlay, Camera camera, Stage stage) {
         this.overlay = overlay;
         this.camera = camera;
+        this.window = stage;
+        
+        shouldBeKeptOnFront = false;
     }
 
 
-    public void setState(State state){
+
+
+	public void setState(State state){
         this.state = state;
     }
 
@@ -62,6 +74,10 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
         mousePosition = nativeMouseEvent;
 
+        if(shouldBeKeptOnFront)
+        	overlay.toFront();
+        else
+        	shouldBeKeptOnFront = true;
 
         if(ctrlKey){
             Point overlayPostion = overlay.getPosition();
@@ -136,11 +152,13 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                         public void run() {
                             overlay.showForDistort();
                             overlay.hide();
+                            window.show();
                         }
                     });
                 }
                 if(camera.isRecording()){
                     camera.stopRecord();
+                    window.toFront();
                     if(onGifGenerated!=null)
                         onGifGenerated.call(camera.getLastImageProduced());
                 }
@@ -176,6 +194,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     @Override
     public void nativeMouseDragged(NativeMouseEvent nativeMouseEvent) {
+    	shouldBeKeptOnFront = false;
         nativeMouseMoved(nativeMouseEvent);
     }
 

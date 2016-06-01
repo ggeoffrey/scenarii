@@ -3,19 +3,28 @@ package scenarii.overlay;
 import org.jnativehook.mouse.NativeMouseEvent;
 
 
+
+
 import java.awt.*;
+
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import scenarii.geometry.Point;
 
 /**
  * Created by geoffrey on 23/05/2016.
  */
 public class Overlay {
+	
+	private static boolean alwaysOnTopSupported;
+	
     private OverlaySection top;
     private OverlaySection bottom;
 
     public Overlay() {
         this.top = new OverlaySection(SectionOrientation.TOP);
         this.bottom = new OverlaySection(SectionOrientation.BOTTOM);
+        alwaysOnTopSupported = supportAlwaysOnTop();
     }
 
     public void setPosition(NativeMouseEvent event){
@@ -82,5 +91,32 @@ public class Overlay {
     public Point getPosition(){
         return top.getPosition();
     }
-
+    
+    
+    public void toFront(){
+    	if(alwaysOnTopSupported){
+    		Platform.runLater(new Runnable() {	
+    			@Override
+    			public void run() {
+    				// TODO Auto-generated method stub
+    				top.toFront();
+    				//top.requestFocus();
+    				bottom.toFront();
+    				//bottom.requestFocus();
+    			}
+    		});    		
+    	}
+    }
+    
+    
+    private boolean supportAlwaysOnTop(){
+    	boolean supported = true;
+    	try{
+    		Stage.class.getMethod("setAlwaysOnTop", boolean.class);
+    	}
+    	catch(Exception e){
+    		supported = false;
+    	}
+    	return supported;
+    }
 }
