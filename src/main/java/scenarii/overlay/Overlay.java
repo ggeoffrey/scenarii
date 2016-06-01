@@ -94,15 +94,12 @@ public class Overlay {
     
     
     public void toFront(){
-    	if(alwaysOnTopSupported){
+    	if(!alwaysOnTopSupported){
     		Platform.runLater(new Runnable() {	
     			@Override
     			public void run() {
-    				// TODO Auto-generated method stub
     				top.toFront();
-    				//top.requestFocus();
     				bottom.toFront();
-    				//bottom.requestFocus();
     			}
     		});    		
     	}

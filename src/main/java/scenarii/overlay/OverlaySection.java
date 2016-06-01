@@ -73,8 +73,6 @@ public class OverlaySection extends Stage {
 					public void run() {
 						// TODO Auto-generated method stub
 						if(!arg2){
-							System.out.println("requesting");
-							_this.requestFocus();
 							_this.toFront();
 						}
 					}

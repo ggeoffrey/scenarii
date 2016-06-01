@@ -27,7 +27,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     private Overlay overlay;
     private Camera camera;
-    private Stage window;
+    //private Stage window;
 
     private boolean ctrlKey;
     private boolean altKey;
@@ -49,10 +49,10 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
     //-----------
 
 
-    public NativeEventListener(Overlay overlay, Camera camera, Stage stage) {
+    public NativeEventListener(Overlay overlay, Camera camera) {
         this.overlay = overlay;
         this.camera = camera;
-        this.window = stage;
+        //this.window = stage;
         
         shouldBeKeptOnFront = false;
     }
@@ -139,9 +139,6 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-        for (int i = 0; i < 100; i++){
-            System.out.println(nativeKeyEvent.getKeyCode());
-        }
 
         switch (nativeKeyEvent.getKeyCode()){
 
@@ -152,13 +149,13 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                         public void run() {
                             overlay.showForDistort();
                             overlay.hide();
-                            window.show();
+                            //window.show();
                         }
                     });
                 }
                 if(camera.isRecording()){
                     camera.stopRecord();
-                    window.toFront();
+                    //window.toFront();
                     if(onGifGenerated!=null)
                         onGifGenerated.call(camera.getLastImageProduced());
                 }

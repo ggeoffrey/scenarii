@@ -85,6 +85,10 @@ public class MainController implements Initializable {
     @FXML
     private ProgressIndicator progress;
 
+
+    private Stage primaryStage;
+
+
     private ArrayList<Step> steps;
 
 
@@ -103,8 +107,8 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    	
-    	root.getStylesheets().add("/res/main.css");
+
+        root.getStylesheets().add("/res/main.css");
 
         invalidName = new SimpleBooleanProperty(false);
         targetFolderPresent = new SimpleBooleanProperty(false);
@@ -120,11 +124,10 @@ public class MainController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 String text = title.getText();
-                if(!FileUtils.isFilenameValid(text)){
+                if (!FileUtils.isFilenameValid(text)) {
                     invalidName.setValue(true);
                     title.setStyle("-fx-text-fill: #ff4b41;");
-                }
-                else{
+                } else {
                     invalidName.setValue(false);
                     title.setStyle("-fx-text-fill: white;");
                 }
@@ -148,17 +151,17 @@ public class MainController implements Initializable {
 
         overlay = new Overlay();
         camera = new Camera(overlay);
-        listener = new NativeEventListener(overlay, camera, ((Stage) root.getScene().getWindow()));
+        listener = new NativeEventListener(overlay, camera);
 
-        
 
         open.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                retreivePrimaryStage();
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Importer...");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file","*.html"));
-                File toImport = fileChooser.showOpenDialog(root.getScene().getWindow());
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
+                File toImport = fileChooser.showOpenDialog(primaryStage);
                 Scenario sc = HtmlImporter.load(toImport);
 
                 title.setText(sc.getTitle());
@@ -168,7 +171,7 @@ public class MainController implements Initializable {
 
                 steps.clear();
                 stepsContainer.getChildren().clear();
-                for(Step s : sc.getSteps()){
+                for (Step s : sc.getSteps()) {
                     addStep(s);
                 }
             }
@@ -185,12 +188,13 @@ public class MainController implements Initializable {
         exportTo.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                retreivePrimaryStage();
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 directoryChooser.setTitle("Export to folder...");
-                File folder = directoryChooser.showDialog(root.getScene().getWindow());
+                File folder = directoryChooser.showDialog(primaryStage);
 
-                if(folder != null){
-                    if(!folder.exists()){
+                if (folder != null) {
+                    if (!folder.exists()) {
                         folder.mkdir();
                     }
                     targetFolder = folder;
@@ -213,6 +217,13 @@ public class MainController implements Initializable {
         author.setOnKeyPressed(clipBoardListener);
         description.setOnKeyPressed(clipBoardListener);
         data.setOnKeyPressed(clipBoardListener);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                retreivePrimaryStage();
+            }
+        });
     }
 
     private void reindex(){
@@ -268,18 +279,19 @@ public class MainController implements Initializable {
         s.onShotRequest(new EventHandler() {
             @Override
             public void handle(Event event) {
-            	root.getScene().getWindow().hide();
+                retreivePrimaryStage();
+            	primaryStage.toBack();
                 overlay.show();
                 overlay.showForDistort();
                 listener.setState(State.RESIZING);
                 try {
+                    LogManager.getLogManager().reset();
+                    Logger.getLogger(GlobalScreen.class.getPackage().getName())
+                            .setLevel(Level.WARNING);
                     GlobalScreen.registerNativeHook();
                     GlobalScreen.setEventDispatcher(new SwingDispatchService());
                     GlobalScreen.addNativeMouseMotionListener(listener);
                     GlobalScreen.addNativeKeyListener(listener);
-                    LogManager.getLogManager().reset();
-                    Logger.getLogger(GlobalScreen.class.getPackage().getName())
-                    .setLevel(Level.WARNING);
                 } catch (NativeHookException e) {
                     e.printStackTrace();
                 }
@@ -288,7 +300,13 @@ public class MainController implements Initializable {
                     @Override
                     public void call(String arg0) {
                         s.setImage(arg0);
-                        
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                primaryStage.toFront();
+                            }
+                        });
+
                         try {
                             GlobalScreen.removeNativeKeyListener(listener);
                             GlobalScreen.removeNativeMouseMotionListener(listener);
@@ -359,5 +377,12 @@ public class MainController implements Initializable {
                 }
             }
         }).start();
+    }
+
+    private Stage retreivePrimaryStage(){
+        primaryStage = root.getScene() != null
+                ? (Stage) root.getScene().getWindow()
+                : null;
+        return primaryStage;
     }
 }
