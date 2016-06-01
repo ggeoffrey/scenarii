@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.Double?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -7,10 +8,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -42,22 +46,45 @@
       <VBox alignment="CENTER" prefHeight="150.0" prefWidth="32.0">
          <children>
             <HBox prefHeight="50.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="up">
-               <image>
-                  <Image url="@arr_up.png" />
-               </image>
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="26.0" styleClass="up">
+               <children>
+                  <Circle fill="#ffffff00" radius="13.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Polygon fill="WHITE" layoutX="13.0" layoutY="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="6.0">
+                    <points>
+                      <Double fx:value="-5.0" />
+                      <Double fx:value="5.0" />
+                      <Double fx:value="5.0" />
+                      <Double fx:value="5.0" />
+                      <Double fx:value="0.0" />
+                      <Double fx:value="-2.0" />
+                    </points>
+                  </Polygon>
+                  <Rectangle fill="WHITE" height="6.0" layoutX="11.0" layoutY="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="4.0" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="12.0" />
+               </children>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </ImageView>
-            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="down">
-               <image>
-                  <Image url="@arr_down.png" />
-               </image>
+            </AnchorPane>
+            <HBox minHeight="-Infinity" prefHeight="3.0" prefWidth="26.0" />
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="26.0" rotate="180.0" styleClass="down">
+               <children>
+                  <Circle fill="#ffffff00" radius="13.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Polygon fill="WHITE" layoutX="13.0" layoutY="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="6.0">
+                     <points>
+                        <Double fx:value="-5.0" />
+                        <Double fx:value="5.0" />
+                        <Double fx:value="5.0" />
+                        <Double fx:value="5.0" />
+                        <Double fx:value="0.0" />
+                        <Double fx:value="-2.0" />
+                     </points>
+                  </Polygon>
+                  <Rectangle fill="WHITE" height="6.0" layoutX="11.0" layoutY="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="4.0" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="12.0" />
+               </children>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </ImageView>
+            </AnchorPane>
             <HBox prefHeight="95.0" prefWidth="62.0" VBox.vgrow="ALWAYS" />
             <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="trash-button">
                <image>

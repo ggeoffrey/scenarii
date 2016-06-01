@@ -11,6 +11,7 @@
     <repositories>
         <repository>
             <id>jade4j-coffeescript-filter-releases</id>
+
             <url>https://raw.github.com/neuland/jade4j-coffeescript-filter/master/releases</url>
         </repository>
         <repository>

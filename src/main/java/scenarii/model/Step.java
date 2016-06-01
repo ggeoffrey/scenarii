@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -42,8 +43,8 @@ public class Step {
     private ChoiceBox<ActionType> actions;
     private TextField optionalData;
 
-    private ImageView up;
-    private ImageView down;
+    private AnchorPane up;
+    private AnchorPane down;
     private ImageView trash;
 
     private File imageFile;
@@ -71,8 +72,8 @@ public class Step {
 
             actions = (ChoiceBox<ActionType>) body.lookup(".action-type");
             optionalData = (TextField) body.lookup(".step-data");
-            up = (ImageView) body.lookup(".up");
-            down = (ImageView) body.lookup(".down");
+            up = (AnchorPane) body.lookup(".up");
+            down = (AnchorPane) body.lookup(".down");
             trash = (ImageView) body.lookup(".trash-button");
 
             positionText.setText(""+position);
