@@ -1,5 +1,5 @@
 body{
-  background-color: orange  ;
+  background-color: whitesmoke  ;
 }
 
 html, body{  max-width: 100%;
@@ -58,6 +58,7 @@ html, body{  max-width: 100%;
   margin-left: 10vh;
   z-index: 2;
   transform: translate(50%,-50%) scale(3);
+  -webkit-transform: translate(50%,-50%) scale(3);
   transition: 0.4s all;
 }
 
