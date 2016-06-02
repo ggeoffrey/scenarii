@@ -17,9 +17,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.jnativehook.SwingDispatchService;
 import org.zeroturnaround.zip.ZipUtil;
 
 import scenarii.camera.Camera;
@@ -36,9 +33,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 import java.util.zip.Deflater;
 
 /**
@@ -60,6 +54,9 @@ public class MainController implements Initializable {
 
     @FXML
     private Button compress;
+
+    @FXML
+    private Button batchRecord;
 
     @FXML
     private TextField title;
@@ -212,6 +209,22 @@ public class MainController implements Initializable {
         });
 
 
+        batchRecord.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listener.batchRecord(new Callback1<ArrayList<Step>>() {
+                    @Override
+                    public void call(ArrayList<Step> steps) {
+                        for (Step s : steps){
+                            addStep(s);
+                        }
+                        reindex();
+                    }
+                });
+            }
+        });
+
+
         ClipBoardActionsHandler clipBoardListener = new ClipBoardActionsHandler();
         title.setOnKeyPressed(clipBoardListener);
         author.setOnKeyPressed(clipBoardListener);
@@ -281,20 +294,8 @@ public class MainController implements Initializable {
             public void handle(Event event) {
                 retreivePrimaryStage();
             	primaryStage.toBack();
-                overlay.show();
-                overlay.showForDistort();
-                listener.setState(State.RESIZING);
-                try {
-                    LogManager.getLogManager().reset();
-                    Logger.getLogger(GlobalScreen.class.getPackage().getName())
-                            .setLevel(Level.WARNING);
-                    GlobalScreen.registerNativeHook();
-                    GlobalScreen.setEventDispatcher(new SwingDispatchService());
-                    GlobalScreen.addNativeMouseMotionListener(listener);
-                    GlobalScreen.addNativeKeyListener(listener);
-                } catch (NativeHookException e) {
-                    e.printStackTrace();
-                }
+
+                listener.initShot();
 
                 listener.onGifGenerated(new Callback1<String>() {
                     @Override
@@ -307,14 +308,7 @@ public class MainController implements Initializable {
                             }
                         });
 
-                        try {
-                            GlobalScreen.removeNativeKeyListener(listener);
-                            GlobalScreen.removeNativeMouseMotionListener(listener);
-                            GlobalScreen.unregisterNativeHook();
-                        }
-                        catch (NativeHookException e){
-                            e.printStackTrace();
-                        }
+                        listener.unbind();
                     }
                 });
 

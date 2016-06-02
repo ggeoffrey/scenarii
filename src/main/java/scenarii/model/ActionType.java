@@ -1,6 +1,5 @@
 package scenarii.model;
 
-import java.util.LinkedList;
 
 /**
  * Created by geoffrey on 30/05/2016.
@@ -16,7 +15,7 @@ public enum ActionType {
     CENTERCLICK("Click on the wheel"),
     SCROLL("Scroll"),
     PINCH("Pinch or Zoom"),
-    DRAGANDDROP("Drag and "),
+    DRAGANDDROP("Drag and drop"),
     HOLDLEFTCLICK("Long left click"),
     HOLDRIGHTCLICK("Long right click"),
     ROTATE("Rotate on touchpad"),  // on touchpad

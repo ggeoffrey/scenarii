@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.SwingDispatchService;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
@@ -15,10 +17,16 @@ import de.neuland.jade4j.parser.node.Node;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
 import scenarii.geometry.*;
+import scenarii.model.Step;
 import scenarii.overlay.Overlay;
 
 
 import scenarii.geometry.Point;
+
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -40,12 +48,18 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     private State state;
     private boolean shouldBeKeptOnFront;
+    private boolean batchRecord;
+
+    private int escCount;
 
     // Callbacks
 
     private Callback1<String> onGifGenerated;
+    private Callback1<ArrayList<Step>> onBatchGenerated;
 
 
+    // Accumulators
+    private ArrayList<Step> stepsAccumulator;
     //-----------
 
 
@@ -55,6 +69,9 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
         //this.window = stage;
         
         shouldBeKeptOnFront = false;
+        batchRecord = false;
+        escCount = 0;
+        stepsAccumulator = new ArrayList<Step>();
     }
 
 
@@ -143,7 +160,39 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
         switch (nativeKeyEvent.getKeyCode()){
 
             case 1: // ESC
-                if(state != State.IDLE){
+
+                if(batchRecord && escCount < 2 && camera.isRecording()){
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            camera.stopRecord();
+                            Step s = new Step(1);
+                            s.setImage(camera.getLastImageProduced());
+                            stepsAccumulator.add(s);
+                            overlay.showForDistort();
+
+                            escCount++;
+                        }
+                    });
+                }
+                else if(camera.isRecording() || escCount >= 2){
+                    escCount = 0;
+                    batchRecord = false;
+                    camera.stopRecord();
+                    //window.toFront();
+                    if(onGifGenerated!=null)
+                        onGifGenerated.call(camera.getLastImageProduced());
+                    else if(onBatchGenerated != null){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                onBatchGenerated.call(stepsAccumulator);
+                            }
+                        });
+                    }
+                }
+
+                if((!batchRecord && state != State.IDLE) || !camera.isRecording()){
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -152,12 +201,6 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                             //window.show();
                         }
                     });
-                }
-                if(camera.isRecording()){
-                    camera.stopRecord();
-                    //window.toFront();
-                    if(onGifGenerated!=null)
-                        onGifGenerated.call(camera.getLastImageProduced());
                 }
                 break;
             case 29:
@@ -171,6 +214,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
             */
             case 56:
                 altKey = false;
+                escCount = Math.max(0, escCount-1);
                 if(!camera.isRecording()){
                     Platform.runLater(new Runnable() {
                         @Override
@@ -195,4 +239,43 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
         nativeMouseMoved(nativeMouseEvent);
     }
 
+
+    public void initShot(){
+        overlay.show();
+        overlay.showForDistort();
+        state = State.RESIZING;
+        bind();
+    }
+
+    public void batchRecord(Callback1<ArrayList<Step>> onBatchGenerated){
+        batchRecord = true;
+        this.onBatchGenerated = onBatchGenerated;
+        stepsAccumulator.clear();
+        initShot();
+    }
+
+    public void bind(){
+        try{
+            LogManager.getLogManager().reset();
+            Logger.getLogger(GlobalScreen.class.getPackage().getName())
+                    .setLevel(Level.WARNING);
+            GlobalScreen.registerNativeHook();
+            GlobalScreen.setEventDispatcher(new SwingDispatchService());
+            GlobalScreen.addNativeMouseMotionListener(this);
+            GlobalScreen.addNativeKeyListener(this);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void unbind(){
+        try {
+            GlobalScreen.removeNativeKeyListener(this);
+            GlobalScreen.removeNativeMouseMotionListener(this);
+            GlobalScreen.unregisterNativeHook();
+        }
+        catch (NativeHookException e){
+            e.printStackTrace();
+        }
+    }
 }

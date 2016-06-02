@@ -109,7 +109,7 @@ public class Recorder extends TimerTask {
     }
 
     protected void exportShot(){
-        if(buffer.size() > 0){
+        if(buffer != null && buffer.size() > 0){
             try {
 
                 mkdir();
