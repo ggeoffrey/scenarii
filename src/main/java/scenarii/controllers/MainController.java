@@ -212,9 +212,12 @@ public class MainController implements Initializable {
         batchRecord.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                primaryStage.toBack();
                 listener.batchRecord(new Callback1<ArrayList<Step>>() {
                     @Override
                     public void call(ArrayList<Step> steps) {
+                        listener.unbind();
+                        primaryStage.toFront();
                         for (Step s : steps){
                             addStep(s);
                         }

@@ -10,10 +10,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import org.apache.commons.io.FileUtils;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
 import com.sun.javafx.application.PlatformImpl;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -40,15 +44,19 @@ public class Main extends Application {
             public void handle(WindowEvent event) {
                 try {
                     GlobalScreen.unregisterNativeHook();
+                    String path = System.getProperty("user.home")+"/scenarii-snaps/";
+                    FileUtils.deleteDirectory(new File(path));
                 } catch (NativeHookException e) {
                     e.printStackTrace();
-                }
-                finally {
-                    Platform.exit();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    //Platform.exit();
                 }
             }
         });
     }
+
 
 
     public static void main(final String[] args) {

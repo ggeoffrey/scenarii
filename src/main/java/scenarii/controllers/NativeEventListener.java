@@ -161,47 +161,46 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
             case 1: // ESC
 
-                if(batchRecord && escCount < 2 && camera.isRecording()){
+                if(!batchRecord){
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            camera.stopRecord();
-                            Step s = new Step(1);
-                            s.setImage(camera.getLastImageProduced());
-                            stepsAccumulator.add(s);
+                            if(camera.isRecording()){
+                                camera.stopRecord();
+                                if(onGifGenerated != null)
+                                    onGifGenerated.call(camera.getLastImageProduced());
+                            }
                             overlay.showForDistort();
-
-                            escCount++;
+                            overlay.hide();
                         }
                     });
                 }
-                else if(camera.isRecording() || escCount >= 2){
-                    escCount = 0;
-                    batchRecord = false;
-                    camera.stopRecord();
-                    //window.toFront();
-                    if(onGifGenerated!=null)
-                        onGifGenerated.call(camera.getLastImageProduced());
-                    else if(onBatchGenerated != null){
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                onBatchGenerated.call(stepsAccumulator);
-                            }
-                        });
+                else{ // batchRecord : true
+                    if(camera.isRecording()){
+                        camera.stopRecord();
+                        Step s = new Step(1);
+                        s.setImage(camera.getLastImageProduced());
+                        stepsAccumulator.add(s);
+                        overlay.showForDistort();
+                        escCount++;
+                    }
+                    else if(escCount >= 2){
+                        batchRecord = false;
+                        if(onBatchGenerated != null){
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    overlay.hide();
+                                    onBatchGenerated.call(stepsAccumulator);
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        escCount++;
                     }
                 }
 
-                if((!batchRecord && state != State.IDLE) || !camera.isRecording()){
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            overlay.showForDistort();
-                            overlay.hide();
-                            //window.show();
-                        }
-                    });
-                }
                 break;
             case 29:
                 ctrlKey = false;

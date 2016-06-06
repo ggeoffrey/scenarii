@@ -95,6 +95,12 @@ public class Recorder extends TimerTask {
         if((y + height) > image.getHeight())
             height = image.getHeight() - y;
 
+        // 1 px padding to avoid red rectangle blinks
+        x += 3;
+        y += 3;
+        width -= 4;
+        height -= 4;
+
         return image.getSubimage(x,y,width,height);
     }
 
