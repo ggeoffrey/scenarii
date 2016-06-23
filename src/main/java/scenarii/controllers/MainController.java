@@ -163,7 +163,7 @@ public class MainController implements Initializable {
 
                 title.setText(sc.getTitle());
                 author.setText(sc.getAuthor());
-                description.setText(sc.getAuthor());
+                description.setText(sc.getDescription());
                 data.setText(sc.getData());
 
                 steps.clear();

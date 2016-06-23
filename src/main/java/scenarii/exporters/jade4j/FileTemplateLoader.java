@@ -2,6 +2,7 @@ package scenarii.exporters.jade4j;
 
 /**
  * Created by geoffrey on 31/05/2016.
+ * Can load a Jade Template from within a jar/bundled application.
  */
 //
 // Source code recreated from a .class file by IntelliJ IDEA
@@ -12,7 +13,6 @@ import java.io.*;
 
 import de.neuland.jade4j.template.TemplateLoader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -32,7 +32,6 @@ public class FileTemplateLoader implements TemplateLoader {
     }
 
     public Reader getReader(String name) throws IOException {
-        //File templateSource = this.getFile(name);
         InputStream templateSource = getClass().getResourceAsStream(this.getFile(name));
         return new InputStreamReader(templateSource, this.encoding);
     }
@@ -41,10 +40,5 @@ public class FileTemplateLoader implements TemplateLoader {
         return this.basePath + name;
     }
 
-    /*
-    private File getFile(String name) {
-        return new File(getClass().getResource(this.basePath + name));
-    }
-    */
 }
 

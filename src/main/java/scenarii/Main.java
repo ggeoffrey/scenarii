@@ -19,14 +19,18 @@ import com.sun.javafx.application.PlatformImpl;
 import java.io.File;
 import java.io.IOException;
 
+
+/**
+ * Application entry point
+ */
 public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
 
-    	//PlatformImpl.setTaskbarApplication(false);
-
+        // window's width
         int w = 800;
+        // and height
         int h = 600;
 
         
@@ -39,19 +43,21 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResource("/res/logo/logo-48.png").toString()));
         primaryStage.show();
 
+        // Close properly
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 try {
+                    // ensure native listener are closed
                     GlobalScreen.unregisterNativeHook();
+
+                    // Clean temp files
                     String path = System.getProperty("user.home")+"/scenarii-snaps/";
                     FileUtils.deleteDirectory(new File(path));
                 } catch (NativeHookException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    //Platform.exit();
                 }
             }
         });

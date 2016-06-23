@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 
 /**
  * Created by geoffrey on 22/05/2016.
+ * A simple line with some extra Properties that we can bind ond.
  */
 public class Line extends javafx.scene.shape.Line {
     public Line() {

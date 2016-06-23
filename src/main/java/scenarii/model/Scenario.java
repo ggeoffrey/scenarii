@@ -6,9 +6,11 @@ import java.util.*;
 
 /**
  * Created by geoffrey on 24/05/2016.
+ * Describe a scenario.
  */
 public class Scenario {
 
+    // Markdown processor
     private PegDownProcessor parser;
 
     private String title;
@@ -16,6 +18,8 @@ public class Scenario {
     private String description;
     private String data;
     private ArrayList<Step> rawSteps;
+
+    // Jade format
     private List<Map<String,Object>> steps;
 
 
@@ -30,7 +34,10 @@ public class Scenario {
         this.steps = stepsToJadeModel(steps);
     }
 
-
+    /**
+     * Transform a Scenario to a jade compatible model.
+     * @return a generic map
+     */
     public Map<String, Object> getJadeModel(){
         Map<String, Object> model = new HashMap<String, Object>();
 
@@ -47,6 +54,11 @@ public class Scenario {
     }
 
 
+    /**
+     * Transforms steps to a jade model
+     * @param steps
+     * @return a generic list
+     */
     private LinkedList<Map<String,Object>> stepsToJadeModel(List<Step> steps){
         LinkedList<Map<String,Object>> models = new LinkedList<Map<String,Object>>();
         for (Step s : steps){

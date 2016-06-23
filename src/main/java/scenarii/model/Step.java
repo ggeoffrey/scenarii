@@ -27,9 +27,11 @@ import java.util.Map;
 
 /**
  * Created by geoffrey on 24/05/2016.
+ * Describe a step, part of a scenario.
  */
 public class Step {
 
+    // Step's position (1 based index)
     private int position;
 
     private HBox body;
@@ -63,6 +65,8 @@ public class Step {
     private void build(){
 
         try {
+
+            // extract GUI components from the DOM
             body = (HBox) FXMLLoader.load(getClass().getResource("/res/step.fxml"));
             positionText = (Text) body.lookup(".step-number");
             gifContainer = (StackPane) body.lookup(".gif-container");
@@ -81,7 +85,6 @@ public class Step {
             cameraIcon.setOpacity(1.);
 
             description.setOnKeyPressed(new ClipBoardActionsHandler());
-
 
 
             actions.setItems(FXCollections.observableArrayList(ActionType.values()));
@@ -156,8 +159,8 @@ public class Step {
                 Image image = new Image("file:"+path);
                 gif.setImage(image);
                 cameraIcon.setOpacity(0.);
-                gif.fitWidthProperty().bind(gifContainer.widthProperty());
-                gif.fitHeightProperty().bind(gifContainer.heightProperty());
+                gif.setPreserveRatio(true);
+                gifContainer.setMaxWidth(100);
             }
         }
     }
@@ -198,7 +201,7 @@ public class Step {
         });
     }
 
-    public Map<String,Object> toJadeModel(PegDownProcessor parser){
+    protected Map<String,Object> toJadeModel(PegDownProcessor parser){
         Map<String,Object> model = new HashMap<String,Object>();
 
         model.put("position", position);

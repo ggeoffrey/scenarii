@@ -22,7 +22,7 @@
    <children>
       <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="150.0" prefWidth="250.0" styleClass="gif-container" HBox.hgrow="ALWAYS">
          <children>
-            <ImageView pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER" />
             <ImageView fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" styleClass="camera-icon">
                <image>
                   <Image url="@camera.png" />
@@ -101,7 +101,7 @@
       <VBox HBox.hgrow="ALWAYS">
          <children>
             <Label text="Description :" />
-            <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" />
+            <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" wrapText="true" />
             <HBox prefHeight="32.0" prefWidth="575.0">
                <children>
                   <ChoiceBox prefWidth="150.0" styleClass="action-type" />

@@ -3,6 +3,7 @@ package scenarii.model;
 
 /**
  * Created by geoffrey on 30/05/2016.
+ * Describe which action are possible on the GUI
  */
 public enum ActionType {
     NOACTION("No action"),

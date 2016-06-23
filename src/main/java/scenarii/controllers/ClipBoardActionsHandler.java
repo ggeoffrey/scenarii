@@ -12,23 +12,29 @@ import javafx.scene.text.Text;
 
 /**
  * Created by geoffrey on 25/05/2016.
+ * Handle the OS clipboard actions.
  */
 public class ClipBoardActionsHandler implements EventHandler<KeyEvent>{
+
+    // Ctrl-C
     private final static KeyCodeCombination copy = new KeyCodeCombination(
             KeyCode.C,
             KeyCombination.CONTROL_DOWN
     );
 
+    // ⌘-C
     private final static KeyCodeCombination copyMac = new KeyCodeCombination(
             KeyCode.C,
             KeyCombination.META_DOWN
     );
 
+    // Ctrl-V
     private final static KeyCodeCombination past = new KeyCodeCombination(
             KeyCode.V,
             KeyCombination.CONTROL_DOWN
     );
 
+    // ⌘-V
     private final static KeyCodeCombination pastMac = new KeyCodeCombination(
             KeyCode.V,
             KeyCombination.META_DOWN
@@ -37,6 +43,8 @@ public class ClipBoardActionsHandler implements EventHandler<KeyEvent>{
 
     @Override
     public void handle(KeyEvent event) {
+
+        // If the clipboard was called on a text control element only
         if(event.getSource() instanceof TextInputControl){
             if(copy.match(event) || copyMac.match(event)){
                 ClipboardContent content = new ClipboardContent();
@@ -54,9 +62,8 @@ public class ClipBoardActionsHandler implements EventHandler<KeyEvent>{
                     caretPosition = 0;
 
                 control.insertText(caretPosition, toPast);
-                event.consume();
+                event.consume(); // avoid propagation
             }
         }
-
     }
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by geoffrey on 26/05/2016.
+ * Create a scenario form an HTML file.
  */
 public class HtmlImporter {
 
@@ -21,16 +22,23 @@ public class HtmlImporter {
         try {
             Document dom = Jsoup.parse(htmlFile,"UTF-8");
 
+            // get title text
             String title = dom.select(".title").first().text();
+
+            // get author text
             String author = dom.select(".author").first().text();
+
+            // get description text and reconstruct line-breaks
             String description = dom
                     .select(".description-wrapper .raw-description")
                     .first()
                     .text()
                     .replaceAll("\\$br","\n");
 
-            String  data = dom.select(".raw-data").first().text().replaceAll("\\$br","\n");
+            // get data text and reconstruct line-breaks
+            String data = dom.select(".raw-data").first().text().replaceAll("\\$br","\n");
 
+            // Reconstruct steps
             ArrayList<Step> steps = new ArrayList<Step>();
             Elements domSteps = dom.select(".step");
             int i = 1;
@@ -44,6 +52,7 @@ public class HtmlImporter {
                 i++;
             }
 
+            // Prepare a new Scenario to return.
             sc = new Scenario(title,author,description,data,steps);
 
         } catch (IOException e) {

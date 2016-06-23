@@ -59,13 +59,16 @@
                   <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Description :" />
-                        <TextArea fx:id="description" prefHeight="133.0" prefWidth="638.0" />
+                        <TextArea fx:id="description" prefHeight="133.0" prefWidth="638.0" wrapText="true" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Data :" />
-                        <TextArea fx:id="data" prefHeight="133.0" prefWidth="638.0" styleClass="data" />
+                        <TextArea fx:id="data" prefHeight="83.0" prefWidth="0.0" styleClass="data" wrapText="true">
+                           <VBox.margin>
+                              <Insets right="50.0" />
+                           </VBox.margin></TextArea>
                      </children>
                   </VBox>
                </children>
