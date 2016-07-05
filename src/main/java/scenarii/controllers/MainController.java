@@ -24,6 +24,7 @@ import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
+import scenarii.helpers.PopupHelper;
 import scenarii.model.Scenario;
 import scenarii.importers.HtmlImporter;
 import scenarii.model.Step;
@@ -101,6 +102,8 @@ public class MainController implements Initializable {
     private BooleanProperty targetFolderPresent;
     private BooleanBinding exportAvailable;
     private BooleanBinding canExportOrCompress;
+
+    private PopupHelper helper;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -240,6 +243,8 @@ public class MainController implements Initializable {
                 retreivePrimaryStage();
             }
         });
+
+        helper = PopupHelper.get();
     }
 
     private void reindex(){
@@ -295,10 +300,24 @@ public class MainController implements Initializable {
         s.onShotRequest(new EventHandler() {
             @Override
             public void handle(Event event) {
+
+                helper.display();
                 retreivePrimaryStage();
             	primaryStage.toBack();
 
                 listener.initShot();
+
+                listener.setOnCancel(new EmptyCallback() {
+                    @Override
+                    public void call() {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                helper.hide();
+                            }
+                        });
+                    }
+                });
 
                 listener.onGifGenerated(new Callback1<String>() {
                     @Override
@@ -308,6 +327,7 @@ public class MainController implements Initializable {
                             @Override
                             public void run() {
                                 primaryStage.toFront();
+                                helper.hide();
                             }
                         });
 

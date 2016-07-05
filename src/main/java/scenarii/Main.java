@@ -11,13 +11,18 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.jexl2.UnifiedJEXL;
+import org.apache.commons.lang3.SystemUtils;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
 import com.sun.javafx.application.PlatformImpl;
+import scenarii.helpers.PopupHelper;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.server.ExportException;
 
 
 /**
@@ -42,6 +47,8 @@ public class Main extends Application {
         primaryStage.setTitle("Scenarii");
         primaryStage.getIcons().add(new Image(getClass().getResource("/res/logo/logo-48.png").toString()));
         primaryStage.show();
+
+        PopupHelper.get().display();
 
         // Close properly
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

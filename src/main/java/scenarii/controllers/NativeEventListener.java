@@ -16,6 +16,7 @@ import org.jnativehook.mouse.NativeMouseMotionListener;
 import de.neuland.jade4j.parser.node.Node;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
+import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.geometry.*;
 import scenarii.model.Step;
 import scenarii.overlay.Overlay;
@@ -56,6 +57,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
     private Callback1<String> onGifGenerated;
     private Callback1<ArrayList<Step>> onBatchGenerated;
+    private EmptyCallback onCancel;
 
 
     // Accumulators
@@ -75,8 +77,6 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
     }
 
 
-
-
 	public void setState(State state){
         this.state = state;
     }
@@ -86,6 +86,9 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
         onGifGenerated = callback1;
     }
 
+    public void setOnCancel(EmptyCallback callback){
+        onCancel = callback;
+    }
     @Override
     public void nativeMouseMoved(final NativeMouseEvent nativeMouseEvent) {
 
@@ -96,7 +99,7 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
         else
         	shouldBeKeptOnFront = true;
 
-        if(ctrlKey){
+        if(ctrlKey && !camera.isRecording()){
             Point overlayPostion = overlay.getPosition();
             Point center = new Point(overlay.getCenter());
             center.translate(
@@ -169,6 +172,9 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                                 camera.stopRecord();
                                 if(onGifGenerated != null)
                                     onGifGenerated.call(camera.getLastImageProduced());
+                            }
+                            else{
+                                onCancel.call();
                             }
                             overlay.showForDistort();
                             overlay.hide();
