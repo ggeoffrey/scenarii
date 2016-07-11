@@ -28,56 +28,6 @@ import java.io.IOException;
 public class PopupHelper extends Stage{
 
 
-
-    /*public static void displayMessage(String title, String subtitle, String message){
-
-
-
-
-            //ProcessBuilder pb = new ProcessBuilder();
-            //Process p = pb.start();
-            //int exitCode = p.waitFor();
-            //System.out.println(exitCode);
-            //
-            //Thread.sleep(1000);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    java.lang.Runtime.getRuntime().exec(new String[]{"osascript", "-e", "display notification \"Hello\""});
-                    Thread.sleep(1000);
-                }
-                catch (Exception e){
-                    System.err.println("Unable to publish notifications...");
-                    System.err.println(e.getMessage());
-                }
-            }
-        });
-
-        //Thread.sleep(1000);
-
-        //if(SystemUtils.IS_OS_WINDOWS) {
-        //    final java.awt.Image iconImage = Toolkit.getDefaultToolkit().getImage("/res/logo/logo-icon.gif");
-        //    final TrayIcon icon = new TrayIcon(iconImage, "Scenarii");
-        //    icon.setImageAutoSize(true);
-        //    SystemTray tray = SystemTray.getSystemTray();
-        //    try {
-        //        tray.add(icon);
-        //        //icon.displayMessage("Test", "Hello", TrayIcon.MessageType.INFO);
-        //    } catch (AWTException e) {
-        //        System.err.println("Unable to load the system tray icon...");
-        //    }
-        //}
-        //else if(SystemUtils.IS_OS_MAC){
-        //    Platform.runLater(new Runnable() {
-        //        @Override
-        //        public void run() {
-        //        }
-        //    });
-        //}
-
-    }*/
-
     private static PopupHelper helper;
 
     public static PopupHelper get(){
@@ -92,6 +42,7 @@ public class PopupHelper extends Stage{
     private FadeTransition ft;
 
     private PopupHelper() {
+        /*
         super(StageStyle.TRANSPARENT);
 
         setAlwaysOnTop(true);
@@ -132,12 +83,12 @@ public class PopupHelper extends Stage{
                 }
             });
         }
-
+        */
     }
 
 
     public void display(){
-        this.show();
+        /*this.show();
         this.toFront();
         final PopupHelper _this = this;
         ft = new FadeTransition(Duration.millis(4000), root);
@@ -149,13 +100,13 @@ public class PopupHelper extends Stage{
             public void handle(ActionEvent event) {
                 _this.hide();
             }
-        });
+        });*/
     }
 
     public void hide(){
-        super.hide();
+        /*super.hide();
         if(ft!=null){
             ft.stop();
-        }
+        }*/
     }
 }
