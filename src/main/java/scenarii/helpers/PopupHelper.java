@@ -88,6 +88,7 @@ public class PopupHelper extends Stage{
 
 
     private AnchorPane root;
+    private Scene scene;
     private FadeTransition ft;
 
     private PopupHelper() {
@@ -96,7 +97,7 @@ public class PopupHelper extends Stage{
         setAlwaysOnTop(true);
         setResizable(false);
 
-        Scene scene = null;
+        scene = null;
         try{
             root = FXMLLoader.load(getClass().getResource("/res/help.fxml"));
             scene = new Scene(root, 600, 100);
@@ -143,18 +144,18 @@ public class PopupHelper extends Stage{
         ft.setFromValue(1.);
         ft.setToValue(0.);
         ft.play();
-        ft.onFinishedProperty().addListener(new ChangeListener<EventHandler<ActionEvent>>() {
+        ft.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
-            public void changed(ObservableValue<? extends EventHandler<ActionEvent>> observable, EventHandler<ActionEvent> oldValue, EventHandler<ActionEvent> newValue) {
+            public void handle(ActionEvent event) {
                 _this.hide();
             }
         });
     }
 
     public void hide(){
+        super.hide();
         if(ft!=null){
             ft.stop();
         }
-        super.hide();
     }
 }

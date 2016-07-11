@@ -301,7 +301,10 @@ public class MainController implements Initializable {
             @Override
             public void handle(Event event) {
 
-                helper.display();
+                if(s.getPosition() < 3)
+                {
+                    helper.display();
+                }
                 retreivePrimaryStage();
             	primaryStage.toBack();
 

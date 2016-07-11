@@ -1,7 +1,6 @@
 package scenarii.camera;
 
 import scenarii.dirtycallbacks.Callback1;
-import javafx.scene.Node;
 
 
 /**
@@ -61,7 +60,7 @@ public class Buffer<T> {
         }
 
         // if no tail then the list was empty.
-        // so make assign it to this first node.
+        // so assign it to this first node.
         if(tail == null)
             tail = n;
 
