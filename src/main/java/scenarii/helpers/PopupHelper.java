@@ -45,7 +45,7 @@ public class PopupHelper extends Stage{
 
         super(StageStyle.TRANSPARENT);
 
-        //setAlwaysOnTop(true);
+        setAlwaysOnTop(true);
         setResizable(false);
 
 
