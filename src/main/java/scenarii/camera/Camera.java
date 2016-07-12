@@ -77,6 +77,8 @@ public class Camera extends Thread {
     }
 
 
+
+
     /**
      * Transform fps to millisec interval.
      * @param fps
@@ -105,6 +107,14 @@ public class Camera extends Thread {
      */
     public String getLastImageProduced(){
         return recorder.getLastImageProduced();
+    }
+
+    /**
+     * Take a fullscreen capture.
+     * @return Path to the resulting image.
+     */
+    public String shot(){
+       return recorder.shotFullScreen();
     }
 
 }

@@ -25,6 +25,9 @@ import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
 import scenarii.helpers.PopupHelper;
+import scenarii.listeners.NativeEventListener;
+import scenarii.listeners.RecordingListener;
+import scenarii.listeners.SimpleShotListener;
 import scenarii.model.Scenario;
 import scenarii.importers.HtmlImporter;
 import scenarii.model.Step;
@@ -95,7 +98,7 @@ public class MainController implements Initializable {
 
     private File targetFolder;
 
-    private NativeEventListener listener;
+    private RecordingListener listener;
 
 
     private BooleanProperty invalidName;
@@ -151,7 +154,20 @@ public class MainController implements Initializable {
 
         overlay = new Overlay();
         camera = new Camera(overlay);
-        listener = new NativeEventListener(overlay, camera);
+        listener = new RecordingListener(overlay,camera);
+
+        new SimpleShotListener(camera, new Callback1<Step>() {
+            @Override
+            public void call(final Step s) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        addStep(s);
+                        reindex();
+                    }
+                });
+            }
+        });
 
 
         open.setOnAction(new EventHandler<ActionEvent>() {

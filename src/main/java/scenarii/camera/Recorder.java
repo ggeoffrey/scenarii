@@ -100,6 +100,14 @@ public class Recorder extends TimerTask {
         this.buffer.add(cropped);
     }
 
+    public String shotFullScreen(){
+        BufferedImage rawImage = getRawImage();
+        Buffer<BufferedImage> buffer = new Buffer<BufferedImage>();
+        buffer.add(rawImage);
+        exportShot(buffer);
+        return lastImageProduced;
+    }
+
     /**
      * Take a proper screen capture.
      * @return A bufferedImage of the screen area.
@@ -165,7 +173,12 @@ public class Recorder extends TimerTask {
     /**
      * Export buffer's content into a .gif file, in a temporary folder.
      */
+
     protected void exportShot(){
+        exportShot(this.buffer);
+    }
+
+    protected void exportShot(Buffer<BufferedImage> buffer){
         if(buffer != null && buffer.size() > 0){
             try {
                 // ensure folder exists.
@@ -180,9 +193,9 @@ public class Recorder extends TimerTask {
 
                 // Make a GifWriter with a bigger delay (by 4) seems appropriate.
                 final GifSequenceWriter writer =
-                        new GifSequenceWriter(output, this.buffer.getFirst().getType(), delay*4, true);
+                        new GifSequenceWriter(output, buffer.getFirst().getType(), delay*4, true);
 
-                this.buffer.forEach(new Callback1<BufferedImage>() {
+                buffer.forEach(new Callback1<BufferedImage>() {
 					@Override
 					public void call(BufferedImage bufferedImage) {
 						try {
@@ -198,7 +211,7 @@ public class Recorder extends TimerTask {
             }
 
             this.shotCounter++;
-            this.buffer.clear();
+            buffer.clear();
         }
     }
 
