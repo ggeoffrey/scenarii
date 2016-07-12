@@ -1,5 +1,6 @@
 package scenarii.model;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -51,10 +52,12 @@ public class Step {
 
     private File imageFile;
 
+    private static Image spinner;
 
     public Step() {
         build();
         position = 0;
+
     }
 
     public Step(int position) {
@@ -63,6 +66,10 @@ public class Step {
     }
 
     private void build(){
+
+        if(spinner == null){
+            spinner = new Image(getClass().getResource("/res/spinner.gif").toString());
+        }
 
         try {
 
@@ -152,17 +159,26 @@ public class Step {
         return gif.getImage() != null;
     }
 
+    public void setLoading(){
+        setImage(spinner);
+    }
+
+
     public void setImage(String path){
         if(path != null){
             imageFile = new File(path);
             if(imageFile.exists() && imageFile.isFile()){
                 Image image = new Image("file:"+path);
-                gif.setImage(image);
-                cameraIcon.setOpacity(0.);
-                gif.setPreserveRatio(true);
-                gifContainer.setMaxWidth(100);
+                setImage(image);
             }
         }
+    }
+
+    public void setImage(Image image){
+        gif.setImage(image);
+        cameraIcon.setOpacity(0.);
+        gif.setPreserveRatio(true);
+        gifContainer.setMaxWidth(100);
     }
 
     public File getImage(){

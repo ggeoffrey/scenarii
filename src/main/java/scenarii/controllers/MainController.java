@@ -99,6 +99,7 @@ public class MainController implements Initializable {
     private File targetFolder;
 
     private RecordingListener listener;
+    private SimpleShotListener simpleShotListener;
 
 
     private BooleanProperty invalidName;
@@ -118,7 +119,7 @@ public class MainController implements Initializable {
 
         exportAvailable = title.textProperty()
                 .isEqualTo("")
-                .or(author.textProperty().isEqualTo(""))
+                //.or(author.textProperty().isEqualTo(""))
                 .or(invalidName);
 
         canExportOrCompress = exportAvailable.or(targetFolderPresent.not());
@@ -154,9 +155,12 @@ public class MainController implements Initializable {
 
         overlay = new Overlay();
         camera = new Camera(overlay);
+
+        NativeEventListener.bindGlobal();
+
         listener = new RecordingListener(overlay,camera);
 
-        new SimpleShotListener(camera, new Callback1<Step>() {
+        simpleShotListener = new SimpleShotListener(camera, new Callback1<Step>() {
             @Override
             public void call(final Step s) {
                 Platform.runLater(new Runnable() {
@@ -164,6 +168,7 @@ public class MainController implements Initializable {
                     public void run() {
                         addStep(s);
                         reindex();
+                        scrollPane.setVvalue(1.0d);
                     }
                 });
             }
@@ -236,6 +241,7 @@ public class MainController implements Initializable {
                     @Override
                     public void call(ArrayList<Step> steps) {
                         listener.unbind();
+                        //simpleShotListener.bind();
                         primaryStage.toFront();
                         for (Step s : steps){
                             addStep(s);
@@ -326,6 +332,8 @@ public class MainController implements Initializable {
 
                 listener.initShot();
 
+                s.setLoading();
+
                 listener.setOnCancel(new EmptyCallback() {
                     @Override
                     public void call() {
@@ -351,6 +359,7 @@ public class MainController implements Initializable {
                         });
 
                         listener.unbind();
+                        //simpleShotListener.bind();
                     }
                 });
 

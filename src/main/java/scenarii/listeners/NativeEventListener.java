@@ -38,32 +38,41 @@ public abstract class NativeEventListener implements NativeMouseMotionListener, 
     @Override
     protected void finalize() throws Throwable {
         unbind();
+        unbindGlobal();
         super.finalize();
     }
 
-    public void bind(){
+    public static void bindGlobal(){
         try{
             LogManager.getLogManager().reset();
             Logger.getLogger(GlobalScreen.class.getPackage().getName())
                     .setLevel(Level.WARNING);
             GlobalScreen.registerNativeHook();
             GlobalScreen.setEventDispatcher(new SwingDispatchService());
-            GlobalScreen.addNativeMouseMotionListener(this);
-            GlobalScreen.addNativeKeyListener(this);
+
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public void unbind(){
+    public void unbindGlobal(){
         try {
-            GlobalScreen.removeNativeKeyListener(this);
-            GlobalScreen.removeNativeMouseMotionListener(this);
             GlobalScreen.unregisterNativeHook();
         }
         catch (NativeHookException e){
             e.printStackTrace();
         }
+    }
+
+
+    public void bind(){
+        GlobalScreen.addNativeMouseMotionListener(this);
+        GlobalScreen.addNativeKeyListener(this);
+    }
+
+    public void unbind(){
+        GlobalScreen.removeNativeKeyListener(this);
+        GlobalScreen.removeNativeMouseMotionListener(this);
     }
 
 }
