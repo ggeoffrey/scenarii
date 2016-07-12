@@ -94,9 +94,9 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
 
         mousePosition = nativeMouseEvent;
 
-        if(shouldBeKeptOnFront)
+        //if(shouldBeKeptOnFront)
         	overlay.toFront();
-        else
+        //else
         	shouldBeKeptOnFront = true;
 
         if(ctrlKey && !camera.isRecording()){
