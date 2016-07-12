@@ -42,11 +42,12 @@ public class PopupHelper extends Stage{
     private FadeTransition ft;
 
     private PopupHelper() {
-        /*
+
         super(StageStyle.TRANSPARENT);
 
-        setAlwaysOnTop(true);
-        setResizable(false);
+        //setAlwaysOnTop(true);
+        //setResizable(false);
+
 
         scene = null;
         try{
@@ -83,12 +84,12 @@ public class PopupHelper extends Stage{
                 }
             });
         }
-        */
+
     }
 
 
     public void display(){
-        /*this.show();
+        this.show();
         this.toFront();
         final PopupHelper _this = this;
         ft = new FadeTransition(Duration.millis(4000), root);
@@ -100,13 +101,13 @@ public class PopupHelper extends Stage{
             public void handle(ActionEvent event) {
                 _this.hide();
             }
-        });*/
+        });
     }
 
     public void hide(){
-        /*super.hide();
+        super.hide();
         if(ft!=null){
             ft.stop();
-        }*/
+        }
     }
 }

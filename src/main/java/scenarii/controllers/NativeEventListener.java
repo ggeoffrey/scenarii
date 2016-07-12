@@ -169,9 +169,14 @@ public class NativeEventListener implements NativeMouseMotionListener, NativeKey
                         @Override
                         public void run() {
                             if(camera.isRecording()){
-                                camera.stopRecord();
-                                if(onGifGenerated != null)
-                                    onGifGenerated.call(camera.getLastImageProduced());
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        camera.stopRecord();
+                                        if(onGifGenerated != null)
+                                            onGifGenerated.call(camera.getLastImageProduced());
+                                    }
+                                }).start();
                             }
                             else{
                                 onCancel.call();
