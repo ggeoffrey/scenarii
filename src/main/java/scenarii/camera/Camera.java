@@ -1,5 +1,6 @@
 package scenarii.camera;
 
+import scenarii.dirtycallbacks.Callback1;
 import scenarii.overlay.Overlay;
 
 import java.awt.*;
@@ -19,8 +20,6 @@ public class Camera extends Thread {
     // Default Frames/second
     private int fps;
 
-    // Robot instance for screen captures
-    private Robot robot;
 
     // A timer object for scheduling shots
     private Timer timer;
@@ -28,18 +27,13 @@ public class Camera extends Thread {
     // The recorder itself
     private Recorder recorder;
 
-    // Allows unique shot names.
-    private int shotCounter;
-
-    // Camera's own thread
-    private Runnable asyncTask;
 
     public Camera(Overlay overlay){
-        build(overlay, 30);
+        build(overlay, 30, null);
     }
 
-    public Camera(Overlay overlay, int fps) {
-        build(overlay, fps);
+    public Camera(Camera camera){
+        build(camera.overlay, 30, camera.recorder.getUniqueName());
     }
 
 
@@ -48,15 +42,18 @@ public class Camera extends Thread {
      * @param overlay
      * @param fps
      */
-    private void build(Overlay overlay, int fps){
+    private void build(Overlay overlay, int fps, Long uniqueName){
         this.overlay = overlay;
-        this.shotCounter = 0;
         this.fps = fps;
 
         this.timer = new Timer(true);
-        this.recorder = new Recorder(overlay, fpsToDelay(fps));
-        timer.scheduleAtFixedRate(recorder, 0, fpsToDelay(fps));
 
+        if(uniqueName == null)
+            this.recorder = new Recorder(overlay, fpsToDelay(fps));
+        else
+            this.recorder = new Recorder(overlay, fpsToDelay(fps), uniqueName);
+
+        timer.scheduleAtFixedRate(recorder, 0, fpsToDelay(fps));
     }
 
     /**
@@ -72,9 +69,15 @@ public class Camera extends Thread {
      * to a temporary file.
      */
     public void stopRecord(){
-        recorder.stopRecording();
-        recorder.exportShot();
+        stopRecord(null);
     }
+
+    public void stopRecord(Callback1<String> callback){
+        recorder.stopRecording();
+        recorder.exportShot(callback);
+    }
+
+
 
 
 

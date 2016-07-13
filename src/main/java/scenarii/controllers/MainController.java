@@ -20,7 +20,9 @@ import javafx.stage.Stage;
 import org.zeroturnaround.zip.ZipUtil;
 
 import scenarii.camera.Camera;
+import scenarii.collections.ObservableArrayList;
 import scenarii.dirtycallbacks.Callback1;
+import scenarii.dirtycallbacks.Callback2;
 import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
@@ -90,7 +92,7 @@ public class MainController implements Initializable {
     private Stage primaryStage;
 
 
-    private ArrayList<Step> steps;
+    private ObservableArrayList<Step> steps;
 
 
     private Overlay overlay;
@@ -144,7 +146,20 @@ public class MainController implements Initializable {
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
 
-        steps = new ArrayList<Step>();
+        steps = new ObservableArrayList<Step>();
+        steps.onAdd(new Callback2<Integer, Step>() {
+            @Override
+            public void call(Integer index, Step s) {
+                stepsContainer.getChildren().add(index, s.getBody());
+            }
+        });
+        steps.onRemove(new Callback2<Integer, Step>() {
+            @Override
+            public void call(Integer index, Step s) {
+                stepsContainer.getChildren().remove(index);
+            }
+        });
+
         addStep();
         addStep.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -237,18 +252,19 @@ public class MainController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 primaryStage.toBack();
-                listener.batchRecord(new Callback1<ArrayList<Step>>() {
+                listener.batchRecord(new EmptyCallback() {
                     @Override
-                    public void call(ArrayList<Step> steps) {
+                    public void call() {
                         listener.unbind();
                         //simpleShotListener.bind();
                         primaryStage.toFront();
-                        for (Step s : steps){
+                        /*for (Step s : steps){
                             addStep(s);
-                        }
+                        }*/
+                        stepsContainer.getChildren().clear();
                         reindex();
                     }
-                });
+                }, steps);
             }
         });
 
@@ -281,9 +297,18 @@ public class MainController implements Initializable {
         addStep(new Step(steps.size()+1));
     }
 
-    private void addStep(final Step s){
-        steps.add(s);
-        stepsContainer.getChildren().add(s.getBody());
+    private void addStep(Step s){
+        addStep(steps.size(), s);
+    }
+
+    private void addStep(int index, final Step s){
+        if(steps.size() == 1 && !steps.get(0).hasGif()){
+            steps.remove(0);
+            //stepsContainer.getChildren().remove(0);
+        }
+        steps.add(index,s);
+        //stepsContainer.getChildren().add(s.getBody());
+        reindex();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -341,8 +366,16 @@ public class MainController implements Initializable {
                             @Override
                             public void run() {
                                 helper.hide();
+                                s.setUnLoading();
                             }
                         });
+                    }
+                });
+
+                listener.onGifGenerating(new EmptyCallback() {
+                    @Override
+                    public void call() {
+                        s.setLoading();
                     }
                 });
 

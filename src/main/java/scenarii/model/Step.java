@@ -53,6 +53,7 @@ public class Step {
     private File imageFile;
 
     private static Image spinner;
+    private Image lastImage;
 
     public Step() {
         build();
@@ -160,7 +161,12 @@ public class Step {
     }
 
     public void setLoading(){
+        lastImage = gif.getImage();
         setImage(spinner);
+    }
+
+    public void setUnLoading(){
+        setImage(lastImage);
     }
 
 

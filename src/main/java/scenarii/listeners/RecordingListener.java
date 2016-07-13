@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.camera.Camera;
+import scenarii.collections.SynchronisedThreadResultCollector;
 import scenarii.controllers.State;
 import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
@@ -12,6 +13,7 @@ import scenarii.model.Step;
 import scenarii.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by geoffrey on 12/07/2016.
@@ -41,13 +43,18 @@ public class RecordingListener extends NativeEventListener{
     // Callbacks
 
     private Callback1<String> onGifGenerated;
-    private Callback1<ArrayList<Step>> onBatchGenerated;
+    private EmptyCallback onGifGenerating;
+    //private Callback1<ArrayList<Step>> onBatchGenerated;
+    private EmptyCallback onBatchGenerated;
     private EmptyCallback onCancel;
 
 
     // Accumulators
     private ArrayList<Step> stepsAccumulator;
     //-----------
+
+
+    private SynchronisedThreadResultCollector<Step> collector;
 
 
     public RecordingListener(Overlay overlay, Camera camera) {
@@ -58,6 +65,7 @@ public class RecordingListener extends NativeEventListener{
         batchRecord = false;
         escCount = 0;
         stepsAccumulator = new ArrayList<Step>();
+        collector = new SynchronisedThreadResultCollector<Step>(stepsAccumulator);
     }
 
     public void setState(State state){
@@ -67,6 +75,9 @@ public class RecordingListener extends NativeEventListener{
 
     public void onGifGenerated(Callback1<String> callback1){
         onGifGenerated = callback1;
+    }
+    public void onGifGenerating(EmptyCallback callback){
+        onGifGenerating = callback;
     }
 
     public void setOnCancel(EmptyCallback callback){
@@ -146,6 +157,10 @@ public class RecordingListener extends NativeEventListener{
                         @Override
                         public void run() {
                             if(camera.isRecording()){
+
+                                if(onGifGenerating!=null)
+                                    onGifGenerating.call();
+
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -165,10 +180,29 @@ public class RecordingListener extends NativeEventListener{
                 }
                 else{ // batchRecord : true
                     if(camera.isRecording()){
-                        camera.stopRecord();
-                        Step s = new Step(1);
-                        s.setImage(camera.getLastImageProduced());
-                        stepsAccumulator.add(s);
+                        final CompletableFuture<Step> collect = new CompletableFuture<>();
+                        collector.execute(collect);
+                        RecordingListener $this = this;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                camera.stopRecord(new Callback1<String>() {
+                                    @Override
+                                    public void call(String path) {
+                                        Step s = new Step(1);
+                                        s.setImage(path);
+                                        collect.complete(s);
+                                    }
+                                });
+                                // replace the camera with a clone of the old one
+                                $this.camera = new Camera(camera);
+                                /* thus, the old camera will do
+                                    it's job in the background
+                                    and be GCed when done.
+                                  */
+                            }
+                        }).start();
+
                         overlay.showForDistort();
                         escCount++;
                     }
@@ -179,7 +213,7 @@ public class RecordingListener extends NativeEventListener{
                                 @Override
                                 public void run() {
                                     overlay.hide();
-                                    onBatchGenerated.call(stepsAccumulator);
+                                    onBatchGenerated.call();
                                 }
                             });
                         }
@@ -197,7 +231,8 @@ public class RecordingListener extends NativeEventListener{
             case 56:
                 altKey = false;
                 escCount = Math.max(0, escCount-1);
-                if(!camera.isRecording()){
+                boolean cameraIsOff = !camera.isRecording();
+                if(cameraIsOff){
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -230,10 +265,17 @@ public class RecordingListener extends NativeEventListener{
     }
 
 
-    public void batchRecord(Callback1<ArrayList<Step>> onBatchGenerated){
+    /*public void batchRecord(Callback1<ArrayList<Step>> onBatchGenerated){
         batchRecord = true;
         this.onBatchGenerated = onBatchGenerated;
         stepsAccumulator.clear();
+        initShot();
+    }*/
+
+    public void batchRecord(EmptyCallback callback, ArrayList<Step> target){
+        batchRecord = true;
+        onBatchGenerated = callback;
+        stepsAccumulator = target;
         initShot();
     }
 }

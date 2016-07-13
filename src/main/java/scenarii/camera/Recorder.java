@@ -38,6 +38,8 @@ public class Recorder extends TimerTask {
     private int delay;
 
 
+
+
     // A folder unique name (current clock time) to avoid files conflicts
     private long uniqueName;
 
@@ -48,9 +50,17 @@ public class Recorder extends TimerTask {
     private String lastImageProduced;
 
 
-    public Recorder(Overlay overlay, int delay) {
+    public Recorder(Overlay overlay, int delay){
+        build(overlay, delay, new Date().getTime());
+    }
 
-        this.uniqueName = new Date().getTime();
+
+    public Recorder(Overlay overlay, int delay, long uniqueName) {
+        build(overlay, delay, uniqueName);
+    }
+
+    private void build(Overlay overlay, int delay, long uniqueName){
+        this.uniqueName = uniqueName;
 
         // ensure folders are ready to store shots
         mkdir();
@@ -104,7 +114,7 @@ public class Recorder extends TimerTask {
         BufferedImage rawImage = getRawImage();
         Buffer<BufferedImage> buffer = new Buffer<BufferedImage>();
         buffer.add(rawImage);
-        exportShot(buffer);
+        exportShot(buffer, null);
         return lastImageProduced;
     }
 
@@ -175,10 +185,14 @@ public class Recorder extends TimerTask {
      */
 
     protected void exportShot(){
-        exportShot(this.buffer);
+        exportShot(null);
     }
 
-    protected void exportShot(Buffer<BufferedImage> buffer){
+    protected void exportShot(Callback1<String> callback){
+        exportShot(this.buffer, callback);
+    }
+
+    protected void exportShot(Buffer<BufferedImage> buffer, Callback1<String> callback){
         if(buffer != null && buffer.size() > 0){
             try {
                 // ensure folder exists.
@@ -186,7 +200,8 @@ public class Recorder extends TimerTask {
 
                 // make a name for the current image.
                 // store it for the rest of the application.
-                lastImageProduced = this.folderPath+"/shot-"+shotCounter+".gif";
+                String lastImage = this.folderPath+"/shot-"+shotCounter+".gif";
+                lastImageProduced = lastImage;
 
                 ImageOutputStream output =
                         new FileImageOutputStream(new File(lastImageProduced));
@@ -206,12 +221,16 @@ public class Recorder extends TimerTask {
 					}
 				});
 
+                if(callback != null) callback.call(lastImage);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             this.shotCounter++;
             buffer.clear();
+
+
         }
     }
 
@@ -241,4 +260,7 @@ public class Recorder extends TimerTask {
         return lastImageProduced;
     }
 
+    public long getUniqueName() {
+        return uniqueName;
+    }
 }
