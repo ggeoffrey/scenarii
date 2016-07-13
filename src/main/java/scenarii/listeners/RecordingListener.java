@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.camera.Camera;
+import scenarii.collections.ObservableArrayList;
 import scenarii.collections.SynchronisedThreadResultCollector;
 import scenarii.controllers.State;
 import scenarii.dirtycallbacks.Callback1;
@@ -11,9 +12,6 @@ import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.geometry.Point;
 import scenarii.model.Step;
 import scenarii.overlay.Overlay;
-
-import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by geoffrey on 12/07/2016.
@@ -50,7 +48,7 @@ public class RecordingListener extends NativeEventListener{
 
 
     // Accumulators
-    private ArrayList<Step> stepsAccumulator;
+    private ObservableArrayList<Step> stepsAccumulator;
     //-----------
 
 
@@ -64,8 +62,8 @@ public class RecordingListener extends NativeEventListener{
         shouldBeKeptOnFront = false;
         batchRecord = false;
         escCount = 0;
-        stepsAccumulator = new ArrayList<Step>();
-        collector = new SynchronisedThreadResultCollector<Step>(stepsAccumulator);
+        stepsAccumulator = new ObservableArrayList<>();
+        collector = new SynchronisedThreadResultCollector<>(stepsAccumulator);
     }
 
     public void setState(State state){
@@ -101,7 +99,6 @@ public class RecordingListener extends NativeEventListener{
                     (int) overlayPostion.getY()
             );
             Point mouse = new Point(nativeMouseEvent.getX(), nativeMouseEvent.getY());
-            //mouse.relativeTo(center);
 
             final double xo = center.getX();
             final double yo = center.getY();
@@ -110,22 +107,14 @@ public class RecordingListener extends NativeEventListener{
 
             if(!isResizing) {
                 isResizing = true;
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        overlay.distort(xo, yo, xc, yc);
-                        isResizing = false;
-                    }
+                Platform.runLater(() -> {
+                    overlay.distort(xo, yo, xc, yc);
+                    isResizing = false;
                 });
             }
         }
         else{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    overlay.setPosition(nativeMouseEvent);
-                }
-            });
+            Platform.runLater(() -> overlay.setPosition(nativeMouseEvent));
         }
     }
 
@@ -144,8 +133,6 @@ public class RecordingListener extends NativeEventListener{
         }
     }
 
-
-
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
 
@@ -153,54 +140,42 @@ public class RecordingListener extends NativeEventListener{
 
             case 1: // ESC
                 if(!batchRecord){
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(camera.isRecording()){
+                    Platform.runLater(() -> {
+                        if(camera.isRecording()){
 
-                                if(onGifGenerating!=null)
-                                    onGifGenerating.call();
+                            if(onGifGenerating!=null)
+                                onGifGenerating.accept();
 
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        camera.stopRecord();
-                                        if(onGifGenerated != null)
-                                            onGifGenerated.call(camera.getLastImageProduced());
-                                    }
-                                }).start();
-                            }
-                            else{
-                                onCancel.call();
-                            }
-                            overlay.showForDistort();
-                            overlay.hide();
+                            new Thread(() -> {
+                                camera.stopRecord();
+                                if(onGifGenerated != null)
+                                    onGifGenerated.call(camera.getLastImageProduced());
+                            }).start();
                         }
+                        else{
+                            onCancel.accept();
+                        }
+                        overlay.showForDistort();
+                        overlay.hide();
                     });
                 }
                 else{ // batchRecord : true
                     if(camera.isRecording()){
-                        final CompletableFuture<Step> collect = new CompletableFuture<>();
-                        collector.execute(collect);
+                        //final CompletableFuture<Step> collect = new CompletableFuture<>();
+
                         RecordingListener $this = this;
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                camera.stopRecord(new Callback1<String>() {
-                                    @Override
-                                    public void call(String path) {
-                                        Step s = new Step(1);
-                                        s.setImage(path);
-                                        collect.complete(s);
-                                    }
-                                });
-                                // replace the camera with a clone of the old one
-                                $this.camera = new Camera(camera);
-                                /* thus, the old camera will do
-                                    it's job in the background
-                                    and be GCed when done.
-                                  */
-                            }
+                        new Thread(() -> {
+                            Step s = new Step(1);
+                            s.setLoading();
+                            stepsAccumulator.add(s);
+                            //collector.execute(s, collect, (path)-> );
+                            camera.stopRecord(s::setImage);
+                            // replace the camera with a clone of the old one
+                            $this.camera = new Camera(camera);
+                            /* thus, the old camera will do
+                                it's job in the background
+                                and be GCed when done.
+                              */
                         }).start();
 
                         overlay.showForDistort();
@@ -209,12 +184,9 @@ public class RecordingListener extends NativeEventListener{
                     else if(escCount >= 2){
                         batchRecord = false;
                         if(onBatchGenerated != null){
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    overlay.hide();
-                                    onBatchGenerated.call();
-                                }
+                            Platform.runLater(() -> {
+                                overlay.hide();
+                                onBatchGenerated.accept();
                             });
                         }
                     }
@@ -222,7 +194,6 @@ public class RecordingListener extends NativeEventListener{
                         escCount++;
                     }
                 }
-
                 break;
             case 29:
                 ctrlKey = false;
@@ -233,12 +204,7 @@ public class RecordingListener extends NativeEventListener{
                 escCount = Math.max(0, escCount-1);
                 boolean cameraIsOff = !camera.isRecording();
                 if(cameraIsOff){
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            overlay.hideForDistort();
-                        }
-                    });
+                    Platform.runLater(() -> overlay.hideForDistort());
                     camera.startRecord();
                 }
                 break;
@@ -263,8 +229,7 @@ public class RecordingListener extends NativeEventListener{
         state = State.RESIZING;
         bind();
     }
-
-
+    
     /*public void batchRecord(Callback1<ArrayList<Step>> onBatchGenerated){
         batchRecord = true;
         this.onBatchGenerated = onBatchGenerated;
@@ -272,10 +237,11 @@ public class RecordingListener extends NativeEventListener{
         initShot();
     }*/
 
-    public void batchRecord(EmptyCallback callback, ArrayList<Step> target){
+    public void batchRecord(EmptyCallback callback, ObservableArrayList<Step> target){
         batchRecord = true;
         onBatchGenerated = callback;
         stepsAccumulator = target;
+        collector.setValuesCollector(target);
         initShot();
     }
 }

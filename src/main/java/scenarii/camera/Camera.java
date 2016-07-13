@@ -5,6 +5,7 @@ import scenarii.overlay.Overlay;
 
 import java.awt.*;
 import java.util.Timer;
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -72,7 +73,7 @@ public class Camera extends Thread {
         stopRecord(null);
     }
 
-    public void stopRecord(Callback1<String> callback){
+    public void stopRecord(Consumer<String> callback){
         recorder.stopRecording();
         recorder.exportShot(callback);
     }

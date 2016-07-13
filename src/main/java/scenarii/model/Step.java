@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -75,7 +76,7 @@ public class Step {
         try {
 
             // extract GUI components from the DOM
-            body = (HBox) FXMLLoader.load(getClass().getResource("/res/step.fxml"));
+            body = FXMLLoader.load(getClass().getResource("/res/step.fxml"));
             positionText = (Text) body.lookup(".step-number");
             gifContainer = (StackPane) body.lookup(".gif-container");
             gif = (ImageView) body.lookup(".gif");
@@ -98,38 +99,32 @@ public class Step {
             actions.setItems(FXCollections.observableArrayList(ActionType.values()));
             actions.setValue(ActionType.NOACTION);
 
-            final ChangeListener<String> listener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            final ChangeListener<String> listener = (observable, oldValue, newValue) -> {
 
-                    //if(newValue.substring(1,newValue.length()).contains("`")
-                    //        || ! (newValue.startsWith("`") && newValue.startsWith("`"))){
-                    //    optionalData.setText(quote(newValue));
-                    //}
-                }
+                //if(newValue.substring(1,newValue.length()).contains("`")
+                //        || ! (newValue.startsWith("`") && newValue.startsWith("`"))){
+                //    optionalData.setText(quote(newValue));
+                //}
             };
 
-            actions.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ActionType>() {
-                @Override
-                public void changed(ObservableValue<? extends ActionType> observable, ActionType oldValue, ActionType newValue) {
-                    switch (newValue){
-                        case KEYPRESS:
-                            optionalData.setEditable(true);
-                            optionalData.textProperty().addListener(listener);
-                            optionalData.requestFocus();
-                            break;
-                        case SIMPLETEXTINSERT:
-                            optionalData.setEditable(true);
-                            optionalData.textProperty().removeListener(listener);
-                            optionalData.setText(unquote(optionalData.getText()));
-                            optionalData.requestFocus();
-                            break;
-                        default:
-                            optionalData.setEditable(false);
-                            optionalData.clear();
-                            optionalData.textProperty().removeListener(listener);
-                            break;
-                    }
+            actions.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                switch (newValue){
+                    case KEYPRESS:
+                        optionalData.setEditable(true);
+                        optionalData.textProperty().addListener(listener);
+                        optionalData.requestFocus();
+                        break;
+                    case SIMPLETEXTINSERT:
+                        optionalData.setEditable(true);
+                        optionalData.textProperty().removeListener(listener);
+                        optionalData.setText(unquote(optionalData.getText()));
+                        optionalData.requestFocus();
+                        break;
+                    default:
+                        optionalData.setEditable(false);
+                        optionalData.clear();
+                        optionalData.textProperty().removeListener(listener);
+                        break;
                 }
             });
 
@@ -190,6 +185,7 @@ public class Step {
     public File getImage(){
         return this.imageFile;
     }
+    public Image getGif(){ return gif.getImage(); }
 
 
     public void onShotRequest(EventHandler eventHandler){
@@ -197,34 +193,19 @@ public class Step {
     }
 
     public void onDeleteRequest(final EmptyCallback callback){
-        trash.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                callback.call();
-            }
-        });
+        trash.setOnMouseClicked(event -> callback.accept());
     }
 
-    public void onMoveUpRequest(final Callback1<Integer> callback){
-        up.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                callback.call(position);
-            }
-        });
+    public void onMoveUpRequest(final Consumer<Integer> callback){
+        up.setOnMouseClicked(event -> callback.accept(position));
     }
 
-    public void onMoveDownRequest(final Callback1<Integer> callback){
-        down.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                callback.call(position);
-            }
-        });
+    public void onMoveDownRequest(final Consumer<Integer> callback){
+        down.setOnMouseClicked(event -> callback.accept(position));
     }
 
     protected Map<String,Object> toJadeModel(PegDownProcessor parser){
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String,Object> model = new HashMap<>();
 
         model.put("position", position);
         model.put("rawDescription", description.getText().replaceAll("\\n","\\$br"));

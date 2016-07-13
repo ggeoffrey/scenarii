@@ -4,21 +4,15 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.zeroturnaround.zip.ZipUtil;
-
 import scenarii.camera.Camera;
 import scenarii.collections.ObservableArrayList;
 import scenarii.dirtycallbacks.Callback1;
@@ -27,17 +21,16 @@ import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
 import scenarii.helpers.PopupHelper;
+import scenarii.importers.HtmlImporter;
 import scenarii.listeners.NativeEventListener;
 import scenarii.listeners.RecordingListener;
 import scenarii.listeners.SimpleShotListener;
 import scenarii.model.Scenario;
-import scenarii.importers.HtmlImporter;
 import scenarii.model.Step;
 import scenarii.overlay.Overlay;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
@@ -95,18 +88,13 @@ public class MainController implements Initializable {
     private ObservableArrayList<Step> steps;
 
 
-    private Overlay overlay;
-    private Camera camera;
-
     private File targetFolder;
 
     private RecordingListener listener;
-    private SimpleShotListener simpleShotListener;
 
 
     private BooleanProperty invalidName;
     private BooleanProperty targetFolderPresent;
-    private BooleanBinding exportAvailable;
     private BooleanBinding canExportOrCompress;
 
     private PopupHelper helper;
@@ -119,153 +107,115 @@ public class MainController implements Initializable {
         invalidName = new SimpleBooleanProperty(false);
         targetFolderPresent = new SimpleBooleanProperty(false);
 
-        exportAvailable = title.textProperty()
+        BooleanBinding exportAvailable = title.textProperty()
                 .isEqualTo("")
                 //.or(author.textProperty().isEqualTo(""))
                 .or(invalidName);
 
         canExportOrCompress = exportAvailable.or(targetFolderPresent.not());
 
-        title.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                String text = title.getText();
-                if (!FileUtils.isFilenameValid(text)) {
-                    invalidName.setValue(true);
-                    title.setStyle("-fx-text-fill: #ff4b41;");
-                } else {
-                    invalidName.setValue(false);
-                    title.setStyle("-fx-text-fill: white;");
-                }
-
+        title.setOnKeyReleased(event -> {
+            String text = title.getText();
+            if (!FileUtils.isFilenameValid(text)) {
+                invalidName.setValue(true);
+                title.setStyle("-fx-text-fill: #ff4b41;");
+            } else {
+                invalidName.setValue(false);
+                title.setStyle("-fx-text-fill: white;");
             }
-        });
 
+        });
 
         export.disableProperty().bind(canExportOrCompress);
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
 
-        steps = new ObservableArrayList<Step>();
-        steps.onAdd(new Callback2<Integer, Step>() {
-            @Override
-            public void call(Integer index, Step s) {
-                stepsContainer.getChildren().add(index, s.getBody());
-            }
+        steps = new ObservableArrayList<>();
+        steps.onAdd((index, step) -> {
+            //stepsContainer.getChildren().add(index, s.getBody());
+            if(step.getPosition() == 0)
+                step.setPosition(index + 1);
+            addStep(index,step);
         });
-        steps.onRemove(new Callback2<Integer, Step>() {
-            @Override
-            public void call(Integer index, Step s) {
-                stepsContainer.getChildren().remove(index);
-            }
-        });
+
+        steps.onRemove((index, step)->  stepsContainer.getChildren().remove((int)index));
 
         addStep();
-        addStep.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                addStep();
-            }
-        });
+        addStep.setOnAction(event -> steps.add(new Step()));
 
-        overlay = new Overlay();
-        camera = new Camera(overlay);
+        Overlay overlay = new Overlay();
+        Camera camera = new Camera(overlay);
 
         NativeEventListener.bindGlobal();
 
-        listener = new RecordingListener(overlay,camera);
+        listener = new RecordingListener(overlay, camera);
 
-        simpleShotListener = new SimpleShotListener(camera, new Callback1<Step>() {
+        SimpleShotListener simpleShotListener = new SimpleShotListener(camera, new Callback1<Step>() {
             @Override
             public void call(final Step s) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        addStep(s);
-                        reindex();
-                        scrollPane.setVvalue(1.0d);
-                    }
+                Platform.runLater(() -> {
+                    steps.add(s);
+                    //reindex();
+                    scrollPane.setVvalue(1.0d);
                 });
             }
         });
 
 
-        open.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                retreivePrimaryStage();
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Importer...");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
-                File toImport = fileChooser.showOpenDialog(primaryStage);
-                Scenario sc = HtmlImporter.load(toImport);
+        open.setOnAction(event -> {
+            retreivePrimaryStage();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Importer...");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
+            File toImport = fileChooser.showOpenDialog(primaryStage);
+            Scenario sc = HtmlImporter.load(toImport);
 
-                title.setText(sc.getTitle());
-                author.setText(sc.getAuthor());
-                description.setText(sc.getDescription());
-                data.setText(sc.getData());
+            title.setText(sc.getTitle());
+            author.setText(sc.getAuthor());
+            description.setText(sc.getDescription());
+            data.setText(sc.getData());
 
-                steps.clear();
-                stepsContainer.getChildren().clear();
-                for (Step s : sc.getSteps()) {
-                    addStep(s);
-                }
+            steps.clear();
+            stepsContainer.getChildren().clear();
+            for (Step s : sc.getSteps()) {
+                addStep(s);
             }
         });
 
 
-        export.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        export.setOnAction(event -> exportToHtml());
+
+        exportTo.setOnAction(event -> {
+            retreivePrimaryStage();
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Export to folder...");
+            File folder = directoryChooser.showDialog(primaryStage);
+
+            if (folder != null) {
+                if (!folder.exists()) {
+                    folder.mkdir();
+                }
+                targetFolder = folder;
+                targetFolderPresent.setValue(true);
                 exportToHtml();
             }
         });
 
-        exportTo.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                retreivePrimaryStage();
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Export to folder...");
-                File folder = directoryChooser.showDialog(primaryStage);
-
-                if (folder != null) {
-                    if (!folder.exists()) {
-                        folder.mkdir();
-                    }
-                    targetFolder = folder;
-                    targetFolderPresent.setValue(true);
-                    exportToHtml();
-                }
-            }
-        });
-
-        compress.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                compress();
-            }
-        });
+        compress.setOnAction(event -> compress());
 
 
-        batchRecord.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                primaryStage.toBack();
-                listener.batchRecord(new EmptyCallback() {
-                    @Override
-                    public void call() {
-                        listener.unbind();
-                        //simpleShotListener.bind();
-                        primaryStage.toFront();
-                        /*for (Step s : steps){
-                            addStep(s);
-                        }*/
-                        stepsContainer.getChildren().clear();
-                        reindex();
-                    }
-                }, steps);
-            }
+        batchRecord.setOnAction(event -> {
+            primaryStage.toBack();
+            listener.batchRecord(() -> {
+                listener.unbind();
+                //simpleShotListener.bind();
+                primaryStage.toFront();
+                /*for (Step s : steps){
+                    addStep(s);
+                }*/
+                //stepsContainer.getChildren().clear();
+                //reindex();
+            }, steps);
         });
 
 
@@ -275,12 +225,7 @@ public class MainController implements Initializable {
         description.setOnKeyPressed(clipBoardListener);
         data.setOnKeyPressed(clipBoardListener);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                retreivePrimaryStage();
-            }
-        });
+        Platform.runLater(this::retreivePrimaryStage);
 
         helper = PopupHelper.get();
     }
@@ -302,112 +247,87 @@ public class MainController implements Initializable {
     }
 
     private void addStep(int index, final Step s){
-        if(steps.size() == 1 && !steps.get(0).hasGif()){
-            steps.remove(0);
+        if(steps.size() == 1 && !steps.get(0).hasGif() && s.hasGif()){
+            steps.get(0).setImage(s.getGif());
             //stepsContainer.getChildren().remove(0);
         }
-        steps.add(index,s);
-        //stepsContainer.getChildren().add(s.getBody());
-        reindex();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+        else {
+            //steps.add(index,s);
+
+            reindex();
+
+            Platform.runLater(() -> {
+                stepsContainer.getChildren().add(index, s.getBody());
                 scrollPane.setVvalue(1.0d);
-            }
-        });
+                reindex();
+            });
 
-        s.onMoveUpRequest(new Callback1<Integer>() {
-            @Override
-            public void call(Integer position) {
-                if(position > 1){
-                    Step target = steps.get(position-1);
-                    stepsContainer.getChildren().remove(position-1);
-                    stepsContainer.getChildren().add(position-2,target.getBody());
-                    steps.remove(position-1);
-                    steps.add(position-2,target);
+            s.onMoveUpRequest(position -> {
+                if (position > 1) {
+                    Step target = steps.get(position - 1);
+                    stepsContainer.getChildren().remove(position - 1);
+                    stepsContainer.getChildren().add(position - 2, target.getBody());
+                    //steps.remove(position-1);
+                    //steps.add(position-2,target);
+                    steps.unshift(position - 1);
                     reindex();
                 }
-            }
-        });
+            });
 
-        s.onMoveDownRequest(new Callback1<Integer>() {
-            @Override
-            public void call(Integer position) {
-                if(position < steps.size()){
-                    Step target = steps.get(position-1);
-                    stepsContainer.getChildren().remove(position-1);
-                    stepsContainer.getChildren().add(position,target.getBody());
-                    steps.remove(position-1);
-                    steps.add(position,target);
+            s.onMoveDownRequest(position -> {
+                if (position < steps.size()) {
+                    Step target = steps.get(position - 1);
+                    stepsContainer.getChildren().remove(position - 1);
+                    stepsContainer.getChildren().add(position, target.getBody());
+                    //steps.remove(position-1);
+                    //steps.add(position,target);
+                    steps.shift(position - 1);
                     reindex();
                 }
-            }
-        });
+            });
 
-        s.onShotRequest(new EventHandler() {
-            @Override
-            public void handle(Event event) {
+            s.onShotRequest(event -> {
 
-                if(s.getPosition() < 3)
-                {
+                if (s.getPosition() < 3) {
                     helper.display();
                 }
                 retreivePrimaryStage();
-            	primaryStage.toBack();
+                primaryStage.toBack();
 
                 listener.initShot();
 
                 s.setLoading();
 
-                listener.setOnCancel(new EmptyCallback() {
-                    @Override
-                    public void call() {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                helper.hide();
-                                s.setUnLoading();
-                            }
-                        });
-                    }
+                listener.setOnCancel(() -> {
+                    Platform.runLater(() -> {
+                        helper.hide();
+                        s.setUnLoading();
+                    });
                 });
 
-                listener.onGifGenerating(new EmptyCallback() {
-                    @Override
-                    public void call() {
-                        s.setLoading();
-                    }
-                });
+                listener.onGifGenerating(s::setLoading);
 
                 listener.onGifGenerated(new Callback1<String>() {
                     @Override
                     public void call(String arg0) {
                         s.setImage(arg0);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                primaryStage.toFront();
-                                helper.hide();
-                            }
+                        Platform.runLater(() -> {
+                            primaryStage.toFront();
+                            helper.hide();
                         });
 
                         listener.unbind();
-                        //simpleShotListener.bind();
                     }
                 });
+            });
 
-            }
-        });
-
-        s.onDeleteRequest(new EmptyCallback() {
-            @Override
-            public void call() {
+            s.onDeleteRequest(() -> {
                 reindex();
                 steps.remove(s);
-                stepsContainer.getChildren().remove(s.getPosition()-1);
+                stepsContainer.getChildren().remove(s.getPosition() - 1);
                 reindex();
-            }
-        });
+            });
+        }
     }
 
 
@@ -420,39 +340,33 @@ public class MainController implements Initializable {
             ZipUtil.pack(new File(path), new File(path+".zip"), Deflater.BEST_COMPRESSION);
 
             progress.setProgress(1.);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    invalidName.setValue(false);
-                    canExportOrCompress.invalidate();
-                }
+            Platform.runLater(() -> {
+                invalidName.setValue(false);
+                canExportOrCompress.invalidate();
             });
 
         }
     }
 
     private void exportToHtml(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(targetFolder != null && targetFolder.exists()){
+        new Thread(() -> {
+            if(targetFolder != null && targetFolder.exists()){
 
-                    Scenario scenario = new Scenario(
-                            title.getText(),
-                            author.getText(),
-                            description.getText(),
-                            data.getText(),
-                            steps
-                    );
-                    System.out.println(targetFolder.getAbsolutePath());
-                    HtmlExporter exporter = new HtmlExporter(targetFolder.getAbsolutePath());
+                Scenario scenario = new Scenario(
+                        title.getText(),
+                        author.getText(),
+                        description.getText(),
+                        data.getText(),
+                        steps
+                );
+                System.out.println(targetFolder.getAbsolutePath());
+                HtmlExporter exporter = new HtmlExporter(targetFolder.getAbsolutePath());
 
-                    invalidName.setValue(true);
+                invalidName.setValue(true);
 
-                    exporter.export(scenario, progress); // <++++++++
+                exporter.export(scenario, progress); // <++++++++++
 
-                    invalidName.setValue(false);
-                }
+                invalidName.setValue(false);
             }
         }).start();
     }

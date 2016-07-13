@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.TimerTask;
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -188,11 +189,11 @@ public class Recorder extends TimerTask {
         exportShot(null);
     }
 
-    protected void exportShot(Callback1<String> callback){
+    protected void exportShot(Consumer<String> callback){
         exportShot(this.buffer, callback);
     }
 
-    protected void exportShot(Buffer<BufferedImage> buffer, Callback1<String> callback){
+    protected void exportShot(Buffer<BufferedImage> buffer, Consumer<String> callback){
         if(buffer != null && buffer.size() > 0){
             try {
                 // ensure folder exists.
@@ -221,7 +222,7 @@ public class Recorder extends TimerTask {
 					}
 				});
 
-                if(callback != null) callback.call(lastImage);
+                if(callback != null) callback.accept(lastImage);
 
             } catch (IOException e) {
                 e.printStackTrace();
