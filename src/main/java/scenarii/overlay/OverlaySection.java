@@ -3,10 +3,6 @@ package scenarii.overlay;
 import javafx.application.Platform;
 import java.lang.reflect.Method;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -17,20 +13,15 @@ import javafx.stage.StageStyle;
 
 import org.jnativehook.mouse.NativeMouseEvent;
 
-import com.sun.javafx.application.PlatformImpl;
-
 import scenarii.geometry.Line;
 import scenarii.geometry.Point;
 
 /**
  * Created by geoffrey on 22/05/2016.
  */
-public class OverlaySection extends Stage {
+class OverlaySection extends Stage {
 
-	public Method alwaysOnTop = null;
-	
-    private SectionOrientation displayMode;
-    private AnchorPane root;
+    private final SectionOrientation displayMode;
 
     private Line leftLine;
     private Line centerLine;
@@ -43,18 +34,21 @@ public class OverlaySection extends Stage {
         this.initModality(Modality.APPLICATION_MODAL);
         
         try{
-			alwaysOnTop = OverlaySection.class.getMethod("setAlwaysOnTop", boolean.class);
+            Method alwaysOnTop = OverlaySection.class.getMethod("setAlwaysOnTop", boolean.class);
 			 if(alwaysOnTop != null){
 				 alwaysOnTop.invoke(this, true);		        	
 		     }
         }
-		catch(Exception e){}
+		catch(Exception e){
+            System.err.println("Unable to find the setAlwaysOnTop JavaFX method. You should"
+                                + " update your Java version. Skipping.");
+        }
        
         
 
         this.displayMode = orientation;
 
-        root = new AnchorPane();
+        AnchorPane root = new AnchorPane();
         makeOverlay(root);
         root.setStyle("-fx-background-color: TRANSPARENT;");
 
@@ -64,22 +58,9 @@ public class OverlaySection extends Stage {
 
         final Stage _this = this;
         //super.setAlwaysOnTop(true);
-        this.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1,
-					final Boolean arg2) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						if(!arg2){
-							_this.toFront();
-						}
-					}
-				});
-				
-			}
-		});
+        this.focusedProperty().addListener((arg0, arg1, arg2) -> Platform.runLater(() -> {
+                if(!arg2) this.toFront();
+        }));
         
     }
 
@@ -108,11 +89,8 @@ public class OverlaySection extends Stage {
 
         arc = new Arc();
         arc.setCenterX(w.doubleValue()/2);
-        w.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                arc.setCenterX(newValue.doubleValue()/2);
-            }
+        w.addListener((observable, oldValue, newValue) -> {
+            arc.setCenterX(newValue.doubleValue()/2);
         });
         arc.setCenterY(0);
         arc.setStartAngle(190);
@@ -121,11 +99,8 @@ public class OverlaySection extends Stage {
         arc.setMouseTransparent(true);
         if(displayMode == SectionOrientation.TOP){
             arc.setCenterY(h.doubleValue());
-            h.addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    arc.setCenterY(newValue.doubleValue());
-                }
+            h.addListener((observable, oldValue, newValue) -> {
+                arc.setCenterY(newValue.doubleValue());
             });
             arc.setStartAngle(10);
             arc.setLength(160);

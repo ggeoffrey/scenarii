@@ -13,7 +13,7 @@ import scenarii.dirtycallbacks.Callback1;
  * Shift, unshift, push and pop are O(1)
  * Iteration is O(n)
  */
-public class Buffer<T> {
+class Buffer<T> {
 
     // Size counter (cache)
     private int size;
@@ -25,7 +25,7 @@ public class Buffer<T> {
     // last (right) node
     private Node tail;
 
-    public Buffer() {
+    Buffer() {
         this.size = 0;
     }
 
@@ -39,7 +39,7 @@ public class Buffer<T> {
     }
 
     /**
-     * Add a T item at the begining of the buffer
+     * Add a T item at the beginning of the buffer
      * @param item
      */
     public void add(T item){

@@ -9,7 +9,7 @@ public class BufferTest {
 
 
     private Buffer<Integer> getBuffer(){
-        Buffer<Integer> sb = new Buffer<Integer>();
+        Buffer<Integer> sb = new Buffer<>();
         sb.add(1);
         sb.add(2);
         sb.add(3);

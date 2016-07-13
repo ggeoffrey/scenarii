@@ -18,8 +18,8 @@ public class Overlay {
 	
 	private static boolean alwaysOnTopSupported;
 	
-    private OverlaySection top;
-    private OverlaySection bottom;
+    private final OverlaySection top;
+    private final OverlaySection bottom;
 
     public Overlay() {
         this.top = new OverlaySection(SectionOrientation.TOP);
@@ -31,7 +31,7 @@ public class Overlay {
         setPosition(event.getX(), event.getY());
     }
 
-    public void setPosition(double x, double y){
+    private void setPosition(double x, double y){
         top.setPosition(x,y);
         bottom.setPosition(x,y);
     }
@@ -95,13 +95,10 @@ public class Overlay {
     
     public void toFront(){
     	if(!alwaysOnTopSupported){
-    		Platform.runLater(new Runnable() {	
-    			@Override
-    			public void run() {
-    				top.toFront();
-    				bottom.toFront();
-    			}
-    		});    		
+    		Platform.runLater(() -> {
+                top.toFront();
+                bottom.toFront();
+            });
     	}
     }
     

@@ -1,8 +1,6 @@
 package scenarii.model;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -11,14 +9,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import org.pegdown.PegDownProcessor;
 import scenarii.controllers.ClipBoardActionsHandler;
-import scenarii.dirtycallbacks.Callback1;
 import scenarii.dirtycallbacks.EmptyCallback;
 
 import java.io.File;
@@ -44,7 +40,6 @@ public class Step {
     private ImageView cameraIcon;
     private TextArea description;
 
-    private ChoiceBox<ActionType> actions;
     private TextField optionalData;
 
     private AnchorPane up;
@@ -83,7 +78,7 @@ public class Step {
             cameraIcon = (ImageView) body.lookup(".camera-icon");
             description = (TextArea) body.lookup(".step-description");
 
-            actions = (ChoiceBox<ActionType>) body.lookup(".action-type");
+            ChoiceBox<ActionType> actions = (ChoiceBox<ActionType>) body.lookup(".action-type");
             optionalData = (TextField) body.lookup(".step-data");
             up = (AnchorPane) body.lookup(".up");
             down = (AnchorPane) body.lookup(".down");
@@ -204,7 +199,7 @@ public class Step {
         down.setOnMouseClicked(event -> callback.accept(position));
     }
 
-    protected Map<String,Object> toJadeModel(PegDownProcessor parser){
+    Map<String,Object> toJadeModel(PegDownProcessor parser){
         Map<String,Object> model = new HashMap<>();
 
         model.put("position", position);

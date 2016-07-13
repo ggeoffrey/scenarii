@@ -18,12 +18,13 @@ import java.util.function.Consumer;
  * Created by geoffrey on 23/05/2016.
  * Managed by a camera to record shots, accumulate them and export them as a .gif .
  */
-public class Recorder extends TimerTask {
+@Deprecated
+class Recorder extends TimerTask {
 
     // The target field of view FOV
     private Overlay overlay;
 
-    // Robot that allows screenshots
+    // Robot that allows screen shots
     private Robot robot;
 
     // Accumulator
@@ -32,13 +33,11 @@ public class Recorder extends TimerTask {
     // Idle?
     private boolean shouldRun;
 
-    // How many shots to generate a unique name for each export ?
-    private int shotCounter;
+    // How many shots? used to generate a unique name for each export.
+    private static int shotCounter = 0;
 
     // Time between two frames
     private int delay;
-
-
 
 
     // A folder unique name (current clock time) to avoid files conflicts
@@ -68,7 +67,7 @@ public class Recorder extends TimerTask {
 
         this.overlay = overlay;
         this.delay = delay;
-        this.shotCounter = 0;
+        Recorder.shotCounter = Math.max(0, shotCounter);
         try {
             robot = new Robot();
         } catch (AWTException e) {
@@ -103,7 +102,7 @@ public class Recorder extends TimerTask {
     }
 
     /**
-     * Take a screenshot, crop it according to the FOV and buffer it.
+     * Take a screen shot, crop it according to the FOV and buffer it.
      */
     private void shot(){
         BufferedImage rawImage = getRawImage();
@@ -113,7 +112,7 @@ public class Recorder extends TimerTask {
 
     public String shotFullScreen(){
         BufferedImage rawImage = getRawImage();
-        Buffer<BufferedImage> buffer = new Buffer<BufferedImage>();
+        Buffer<BufferedImage> buffer = new Buffer<>();
         buffer.add(rawImage);
         exportShot(buffer, null);
         return lastImageProduced;
@@ -170,7 +169,7 @@ public class Recorder extends TimerTask {
      * You must call stopRecording to stop it.
      */
     public void record(){
-        buffer = new Buffer<BufferedImage>();
+        buffer = new Buffer<>();
         shouldRun = true;
     }
 
@@ -185,15 +184,12 @@ public class Recorder extends TimerTask {
      * Export buffer's content into a .gif file, in a temporary folder.
      */
 
-    protected void exportShot(){
-        exportShot(null);
-    }
 
-    protected void exportShot(Consumer<String> callback){
+    void exportShot(Consumer<String> callback){
         exportShot(this.buffer, callback);
     }
 
-    protected void exportShot(Buffer<BufferedImage> buffer, Consumer<String> callback){
+    private void exportShot(Buffer<BufferedImage> buffer, Consumer<String> callback){
         if(buffer != null && buffer.size() > 0){
             try {
                 // ensure folder exists.
@@ -229,9 +225,9 @@ public class Recorder extends TimerTask {
             }
 
             this.shotCounter++;
-            buffer.clear();
+            buffer = new Buffer<>();
 
-
+            Runtime.getRuntime().gc();
         }
     }
 

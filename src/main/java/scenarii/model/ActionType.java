@@ -31,9 +31,9 @@ public enum ActionType {
     FORCECLICK("Force Touch click (Apple)")    // Force Touch (Apple)
     ;
 
-    private String text;
+    private final String text;
 
-    private ActionType(final String text){
+    ActionType(final String text){
         this.text = text;
     }
 

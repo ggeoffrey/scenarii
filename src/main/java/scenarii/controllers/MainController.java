@@ -16,8 +16,6 @@ import org.zeroturnaround.zip.ZipUtil;
 import scenarii.camera.Camera;
 import scenarii.collections.ObservableArrayList;
 import scenarii.dirtycallbacks.Callback1;
-import scenarii.dirtycallbacks.Callback2;
-import scenarii.dirtycallbacks.EmptyCallback;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
 import scenarii.helpers.PopupHelper;
@@ -150,7 +148,7 @@ public class MainController implements Initializable {
 
         listener = new RecordingListener(overlay, camera);
 
-        SimpleShotListener simpleShotListener = new SimpleShotListener(camera, new Callback1<Step>() {
+        new SimpleShotListener(camera, new Callback1<Step>() {
             @Override
             public void call(final Step s) {
                 Platform.runLater(() -> {
@@ -163,7 +161,7 @@ public class MainController implements Initializable {
 
 
         open.setOnAction(event -> {
-            retreivePrimaryStage();
+            retrievePrimaryStage();
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Importer...");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("HTML file", "*.html"));
@@ -177,16 +175,14 @@ public class MainController implements Initializable {
 
             steps.clear();
             stepsContainer.getChildren().clear();
-            for (Step s : sc.getSteps()) {
-                addStep(s);
-            }
+            sc.getSteps().forEach(this::addStep);
         });
 
 
         export.setOnAction(event -> exportToHtml());
 
         exportTo.setOnAction(event -> {
-            retreivePrimaryStage();
+            retrievePrimaryStage();
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Export to folder...");
             File folder = directoryChooser.showDialog(primaryStage);
@@ -225,7 +221,7 @@ public class MainController implements Initializable {
         description.setOnKeyPressed(clipBoardListener);
         data.setOnKeyPressed(clipBoardListener);
 
-        Platform.runLater(this::retreivePrimaryStage);
+        Platform.runLater(this::retrievePrimaryStage);
 
         helper = PopupHelper.get();
     }
@@ -291,19 +287,17 @@ public class MainController implements Initializable {
                 if (s.getPosition() < 3) {
                     helper.display();
                 }
-                retreivePrimaryStage();
+                retrievePrimaryStage();
                 primaryStage.toBack();
 
                 listener.initShot();
 
                 s.setLoading();
 
-                listener.setOnCancel(() -> {
-                    Platform.runLater(() -> {
-                        helper.hide();
-                        s.setUnLoading();
-                    });
-                });
+                listener.setOnCancel(() -> Platform.runLater(() -> {
+                    helper.hide();
+                    s.setUnLoading();
+                }));
 
                 listener.onGifGenerating(s::setLoading);
 
@@ -371,7 +365,7 @@ public class MainController implements Initializable {
         }).start();
     }
 
-    private Stage retreivePrimaryStage(){
+    private Stage retrievePrimaryStage(){
         primaryStage = root.getScene() != null
                 ? (Stage) root.getScene().getWindow()
                 : null;

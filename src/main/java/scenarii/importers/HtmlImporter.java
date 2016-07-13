@@ -39,7 +39,7 @@ public class HtmlImporter {
             String data = dom.select(".raw-data").first().text().replaceAll("\\$br","\n");
 
             // Reconstruct steps
-            ArrayList<Step> steps = new ArrayList<Step>();
+            ArrayList<Step> steps = new ArrayList<>();
             Elements domSteps = dom.select(".step");
             int i = 1;
             for(Element e : domSteps){

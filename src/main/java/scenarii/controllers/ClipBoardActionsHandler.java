@@ -8,7 +8,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.text.Text;
 
 /**
  * Created by geoffrey on 25/05/2016.

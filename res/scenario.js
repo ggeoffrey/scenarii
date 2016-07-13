@@ -7,8 +7,6 @@
     var links = document.links;
     for(var i = 0; i<links.length; i++){ //compat ie < 10
         var link = links[i];
-        //if(link.hostname != window.location.hostname){
-        link.target = "_blank"
-        //}
+        link.target = "_blank";
     }
 })();

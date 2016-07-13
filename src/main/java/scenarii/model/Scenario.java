@@ -3,6 +3,7 @@ package scenarii.model;
 import org.pegdown.PegDownProcessor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -11,7 +12,7 @@ import java.util.*;
 public class Scenario {
 
     // Markdown processor
-    private PegDownProcessor parser;
+    private final PegDownProcessor parser;
 
     private String title;
     private String author;
@@ -20,7 +21,7 @@ public class Scenario {
     private ArrayList<Step> rawSteps;
 
     // Jade format
-    private List<Map<String,Object>> steps;
+    private final List<Map<String,Object>> steps;
 
 
     public Scenario(String title, String author, String description, String data, ArrayList<Step> steps) {
@@ -39,7 +40,7 @@ public class Scenario {
      * @return a generic map
      */
     public Map<String, Object> getJadeModel(){
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
 
         model.put("title",title);
 
@@ -60,11 +61,9 @@ public class Scenario {
      * @return a generic list
      */
     private LinkedList<Map<String,Object>> stepsToJadeModel(List<Step> steps){
-        LinkedList<Map<String,Object>> models = new LinkedList<Map<String,Object>>();
-        for (Step s : steps){
-            models.add(s.toJadeModel(parser));
-        }
-        return models;
+        return steps.stream()
+                .map(s -> s.toJadeModel(parser))
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
 

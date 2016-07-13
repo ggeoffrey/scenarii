@@ -5,17 +5,13 @@ package scenarii.exporters.jade4j;
  * Can load a Jade Template from within a jar/bundled application.
  */
 //
-// Source code recreated from a .class file by IntelliJ IDEA
+// Source code recreated from a .class file by Intellij IDEA
 // (powered by Fernflower decompiler)
 //
 
 import java.io.*;
 
 import de.neuland.jade4j.template.TemplateLoader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 public class FileTemplateLoader implements TemplateLoader {
     private String encoding = "UTF-8";

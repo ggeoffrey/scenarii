@@ -20,10 +20,10 @@ import java.nio.file.Paths;
 public class HtmlExporter {
 
     // Where to export
-    private String targetFolder;
+    private final String targetFolder;
 
     // How to export
-    private JadeConfiguration config;
+    private final JadeConfiguration config;
 
     // What should it look like
     private JadeTemplate template;
@@ -99,7 +99,9 @@ public class HtmlExporter {
                                 Paths.get(new File(resFolder+image.getName()).getPath())
                         );
                     }
-                    catch (FileAlreadyExistsException alreadyExists){}
+                    catch (FileAlreadyExistsException alreadyExists){
+                        System.err.println("File already exist. Ignoring.");
+                    }
                 }
                 currentStep++;
                 progressIndicator.setProgress(percent(currentStep,steps));

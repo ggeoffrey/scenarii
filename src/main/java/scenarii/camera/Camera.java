@@ -1,9 +1,7 @@
 package scenarii.camera;
 
-import scenarii.dirtycallbacks.Callback1;
 import scenarii.overlay.Overlay;
 
-import java.awt.*;
 import java.util.Timer;
 import java.util.function.Consumer;
 
@@ -13,17 +11,12 @@ import java.util.function.Consumer;
  * Describe the camera, drawing the rectangle,
  * managing the FOV and the recorder.
  */
+@Deprecated
 public class Camera extends Thread {
 
     // JavaFx panels
     private Overlay overlay;
 
-    // Default Frames/second
-    private int fps;
-
-
-    // A timer object for scheduling shots
-    private Timer timer;
 
     // The recorder itself
     private Recorder recorder;
@@ -45,9 +38,8 @@ public class Camera extends Thread {
      */
     private void build(Overlay overlay, int fps, Long uniqueName){
         this.overlay = overlay;
-        this.fps = fps;
 
-        this.timer = new Timer(true);
+        Timer timer = new Timer(true);
 
         if(uniqueName == null)
             this.recorder = new Recorder(overlay, fpsToDelay(fps));
@@ -84,7 +76,7 @@ public class Camera extends Thread {
 
 
     /**
-     * Transform fps to millisec interval.
+     * Transform fps to millisecond interval.
      * @param fps
      * @return time between two frames
      */
@@ -98,13 +90,6 @@ public class Camera extends Thread {
     }
 
 
-
-    public void reset(){
-        timer.cancel();
-        recorder = new Recorder(overlay, fpsToDelay(fps));
-        timer.scheduleAtFixedRate(recorder, 0, fpsToDelay(fps));
-    }
-
     /**
      * Get the last camera exported image.
      * @return
@@ -114,7 +99,7 @@ public class Camera extends Thread {
     }
 
     /**
-     * Take a fullscreen capture.
+     * Take a full screen capture.
      * @return Path to the resulting image.
      */
     public String shot(){

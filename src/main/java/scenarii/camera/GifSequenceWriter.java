@@ -24,11 +24,11 @@ import java.util.Iterator;
  * Please see the credits in the source file. (CC-BY)
  * (elliot[at]kroo[dot]net)
  */
-public class GifSequenceWriter {
+class GifSequenceWriter {
 
-    protected ImageWriter gifWriter;
-    protected ImageWriteParam imageWriteParam;
-    protected IIOMetadata imageMetaData;
+    private ImageWriter gifWriter;
+    private ImageWriteParam imageWriteParam;
+    private IIOMetadata imageMetaData;
 
     /**
      * Creates a new GifSequenceWriter
@@ -44,7 +44,7 @@ public class GifSequenceWriter {
             ImageOutputStream outputStream,
             int imageType,
             int timeBetweenFramesMS,
-            boolean loopContinuously) throws IIOException, IOException {
+            boolean loopContinuously) throws IOException {
         // my method to create a writer
         gifWriter = getWriter();
         imageWriteParam = gifWriter.getDefaultWriteParam();

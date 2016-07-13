@@ -1,7 +1,5 @@
 package scenarii.geometry;
 
-import scenarii.Main;
-
 /**
  * Created by geoffrey on 26/05/2016.
  * A point (x,y)
@@ -30,7 +28,7 @@ public class Point extends java.awt.Point {
 
 
     /**
-     * Δ beetween a & b.
+     * Δ between a & b.
      * @param a
      * @param b
      * @return

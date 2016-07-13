@@ -1,25 +1,15 @@
 package scenarii.helpers;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.*;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -38,7 +28,6 @@ public class PopupHelper extends Stage{
 
 
     private AnchorPane root;
-    private Scene scene;
     private FadeTransition ft;
 
     private PopupHelper() {
@@ -49,7 +38,7 @@ public class PopupHelper extends Stage{
         setResizable(false);
 
 
-        scene = null;
+        Scene scene = null;
         try{
             root = FXMLLoader.load(getClass().getResource("/res/help.fxml"));
             scene = new Scene(root, 600, 100);
@@ -66,21 +55,15 @@ public class PopupHelper extends Stage{
 
         final PopupHelper _this = this;
         if(scene != null){
-            scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if(ft!= null){
-                        ft.playFromStart();
-                    }
+            scene.setOnMouseMoved(event -> {
+                if(ft!= null){
+                    ft.playFromStart();
                 }
             });
-            scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if(ft != null){
-                        ft.stop();
-                        _this.hide();
-                    }
+            scene.setOnMouseClicked(event -> {
+                if(ft != null){
+                    ft.stop();
+                    _this.hide();
                 }
             });
         }
@@ -96,12 +79,7 @@ public class PopupHelper extends Stage{
         ft.setFromValue(1.);
         ft.setToValue(0.);
         ft.play();
-        ft.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                _this.hide();
-            }
-        });
+        ft.setOnFinished(event -> _this.hide());
     }
 
     public void hide(){

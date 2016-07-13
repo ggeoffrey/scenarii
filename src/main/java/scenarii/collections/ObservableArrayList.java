@@ -1,10 +1,7 @@
 package scenarii.collections;
 
-import scenarii.dirtycallbacks.Callback2;
-
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 13/07/2016.

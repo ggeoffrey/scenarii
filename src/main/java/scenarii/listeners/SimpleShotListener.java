@@ -1,31 +1,17 @@
 package scenarii.listeners;
 
-import javafx.application.Platform;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.jnativehook.SwingDispatchService;
 import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseMotionListener;
 import scenarii.camera.Camera;
 import scenarii.dirtycallbacks.Callback1;
-import scenarii.dirtycallbacks.EmptyCallback;
-import scenarii.geometry.Point;
 import scenarii.model.Step;
-import scenarii.overlay.Overlay;
-
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Created by geoffrey on 24/05/2016.
  */
 public class SimpleShotListener extends NativeEventListener {
 
-    private Camera camera;
+    private final Camera camera;
 
     private boolean ctrlKey;
     private boolean shiftKey;
@@ -33,7 +19,7 @@ public class SimpleShotListener extends NativeEventListener {
 
     // Callbacks
 
-    private Callback1<Step> onShot;
+    private final Callback1<Step> onShot;
 
 
 

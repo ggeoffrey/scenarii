@@ -16,7 +16,8 @@ public class FileUtils {
         if(file.contains("/"))
             return false;
         try {
-            String s = f.getCanonicalPath();
+            /*String s = */
+            f.getCanonicalPath();
             return true;
         }
         catch (IOException e) {
