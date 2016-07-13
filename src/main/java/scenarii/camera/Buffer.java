@@ -1,7 +1,7 @@
 package scenarii.camera;
 
-import scenarii.dirtycallbacks.Callback1;
 
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 23/05/2016.
@@ -13,6 +13,7 @@ import scenarii.dirtycallbacks.Callback1;
  * Shift, unshift, push and pop are O(1)
  * Iteration is O(n)
  */
+@Deprecated
 class Buffer<T> {
 
     // Size counter (cache)
@@ -107,11 +108,11 @@ class Buffer<T> {
      * Iterate over the list, calling the given callback for each item.
      * @param consumer Callback to call with one T parameter.
      */
-    public void forEach(Callback1<T> consumer){
+    public void forEach(Consumer<T> consumer){
         if(size > 0){
             Node n = tail;
             while (n != null){
-                consumer.call(n.content);
+                consumer.accept(n.content);
                 n = n.previous;
             }
         }

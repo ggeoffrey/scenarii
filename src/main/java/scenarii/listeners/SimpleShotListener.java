@@ -3,8 +3,9 @@ package scenarii.listeners;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.camera.Camera;
-import scenarii.dirtycallbacks.Callback1;
 import scenarii.model.Step;
+
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 24/05/2016.
@@ -19,11 +20,11 @@ public class SimpleShotListener extends NativeEventListener {
 
     // Callbacks
 
-    private final Callback1<Step> onShot;
+    private final Consumer<Step> onShot;
 
 
 
-    public SimpleShotListener(Camera camera, Callback1<Step> onShot) {
+    public SimpleShotListener(Camera camera, Consumer<Step> onShot) {
         this.camera = camera;
         this.onShot = onShot;
         bind();
@@ -54,7 +55,7 @@ public class SimpleShotListener extends NativeEventListener {
                     Step s = new Step(1);
                     s.setImage(camera.shot());
                     if(onShot != null){
-                        onShot.call(s);
+                        onShot.accept(s);
                     }
                 }
                 break;

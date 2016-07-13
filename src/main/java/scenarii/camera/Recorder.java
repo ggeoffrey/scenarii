@@ -1,6 +1,5 @@
 package scenarii.camera;
 
-import scenarii.dirtycallbacks.Callback1;
 import scenarii.overlay.Overlay;
 
 import javax.imageio.stream.FileImageOutputStream;
@@ -207,15 +206,12 @@ class Recorder extends TimerTask {
                 final GifSequenceWriter writer =
                         new GifSequenceWriter(output, buffer.getFirst().getType(), delay*4, true);
 
-                buffer.forEach(new Callback1<BufferedImage>() {
-					@Override
-					public void call(BufferedImage bufferedImage) {
-						try {
-                            writer.writeToSequence(bufferedImage);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }						
-					}
+                buffer.forEach((bufferedImage)->{
+                    try {
+                        writer.writeToSequence(bufferedImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 				});
 
                 if(callback != null) callback.accept(lastImage);
@@ -224,7 +220,7 @@ class Recorder extends TimerTask {
                 e.printStackTrace();
             }
 
-            this.shotCounter++;
+            shotCounter++;
             buffer = new Buffer<>();
 
             Runtime.getRuntime().gc();

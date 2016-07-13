@@ -5,11 +5,12 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.mouse.NativeMouseEvent;
 import scenarii.camera.Camera;
 import scenarii.collections.ObservableArrayList;
-import scenarii.dirtycallbacks.Callback1;
-import scenarii.dirtycallbacks.EmptyCallback;
+import scenarii.dirtycallbacks.Callback;
 import scenarii.geometry.Point;
 import scenarii.model.Step;
 import scenarii.overlay.Overlay;
+
+import java.util.function.Consumer;
 
 /**
  * Created by geoffrey on 12/07/2016.
@@ -35,11 +36,11 @@ public class RecordingListener extends NativeEventListener{
 
     // Callbacks
 
-    private Callback1<String> onGifGenerated;
-    private EmptyCallback onGifGenerating;
+    private Consumer<String> onGifGenerated;
+    private Callback onGifGenerating;
     //private Callback1<ArrayList<Step>> onBatchGenerated;
-    private EmptyCallback onBatchGenerated;
-    private EmptyCallback onCancel;
+    private Callback onBatchGenerated;
+    private Callback onCancel;
 
 
     // Accumulators
@@ -60,14 +61,14 @@ public class RecordingListener extends NativeEventListener{
     }
 
 
-    public void onGifGenerated(Callback1<String> callback1){
-        onGifGenerated = callback1;
+    public void onGifGenerated(Consumer<String> callback){
+        onGifGenerated = callback;
     }
-    public void onGifGenerating(EmptyCallback callback){
+    public void onGifGenerating(Callback callback){
         onGifGenerating = callback;
     }
 
-    public void setOnCancel(EmptyCallback callback){
+    public void setOnCancel(Callback callback){
         onCancel = callback;
     }
     @Override
@@ -134,7 +135,7 @@ public class RecordingListener extends NativeEventListener{
                             new Thread(() -> {
                                 camera.stopRecord();
                                 if(onGifGenerated != null)
-                                    onGifGenerated.call(camera.getLastImageProduced());
+                                    onGifGenerated.accept(camera.getLastImageProduced());
                             }).start();
                         }
                         else{
@@ -216,7 +217,7 @@ public class RecordingListener extends NativeEventListener{
         initShot();
     }*/
 
-    public void batchRecord(EmptyCallback callback, ObservableArrayList<Step> target){
+    public void batchRecord(ObservableArrayList<Step> target, Callback callback){
         batchRecord = true;
         onBatchGenerated = callback;
         stepsAccumulator = target;

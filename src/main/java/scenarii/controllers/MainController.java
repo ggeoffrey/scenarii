@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import org.zeroturnaround.zip.ZipUtil;
 import scenarii.camera.Camera;
 import scenarii.collections.ObservableArrayList;
-import scenarii.dirtycallbacks.Callback1;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
 import scenarii.helpers.PopupHelper;
@@ -37,64 +36,29 @@ import java.util.zip.Deflater;
  */
 public class MainController implements Initializable {
 
-    @FXML
-    private BorderPane root;
-
-    @FXML
-    private Button open;
-
-    @FXML
-    private Button export;
-
-    @FXML
-    private Button exportTo;
-
-    @FXML
-    private Button compress;
-
-    @FXML
-    private Button batchRecord;
-
-    @FXML
-    private TextField title;
-
-    @FXML
-    private TextField author;
-
-    @FXML
-    private TextArea description;
-
-    @FXML
-    private TextArea data;
-
-    @FXML
-    private ScrollPane scrollPane;
-
-    @FXML
-    private VBox stepsContainer;
-
-    @FXML
-    private Button addStep;
-
-    @FXML
-    private ProgressIndicator progress;
+    @FXML private BorderPane root;
+    @FXML private Button open;
+    @FXML private Button export;
+    @FXML private Button exportTo;
+    @FXML private Button compress;
+    @FXML private Button batchRecord;
+    @FXML private TextField title;
+    @FXML private TextField author;
+    @FXML private TextArea description;
+    @FXML private TextArea data;
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox stepsContainer;
+    @FXML private Button addStep;
+    @FXML private ProgressIndicator progress;
 
 
     private Stage primaryStage;
-
-
     private ObservableArrayList<Step> steps;
-
-
     private File targetFolder;
-
     private RecordingListener listener;
-
-
     private BooleanProperty invalidName;
     private BooleanProperty targetFolderPresent;
     private BooleanBinding canExportOrCompress;
-
     private PopupHelper helper;
 
     @Override
@@ -129,16 +93,11 @@ public class MainController implements Initializable {
         compress.disableProperty().bind(canExportOrCompress);
 
         steps = new ObservableArrayList<>();
-        steps.onAdd((index, step) -> {
-            //stepsContainer.getChildren().add(index, s.getBody());
-            if(step.getPosition() == 0)
-                step.setPosition(index + 1);
-            addStep(index,step);
-        });
+        steps.onAdd(this::addStep);
 
         steps.onRemove((index, step)->  stepsContainer.getChildren().remove((int)index));
 
-        addStep();
+        steps.add(new Step());
         addStep.setOnAction(event -> steps.add(new Step()));
 
         Overlay overlay = new Overlay();
@@ -148,16 +107,10 @@ public class MainController implements Initializable {
 
         listener = new RecordingListener(overlay, camera);
 
-        new SimpleShotListener(camera, new Callback1<Step>() {
-            @Override
-            public void call(final Step s) {
-                Platform.runLater(() -> {
-                    steps.add(s);
-                    //reindex();
-                    scrollPane.setVvalue(1.0d);
-                });
-            }
-        });
+        new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
+            steps.add(step);
+            scrollPane.setVvalue(1.0d);
+        }));
 
 
         open.setOnAction(event -> {
@@ -202,16 +155,10 @@ public class MainController implements Initializable {
 
         batchRecord.setOnAction(event -> {
             primaryStage.toBack();
-            listener.batchRecord(() -> {
+            listener.batchRecord(steps, () -> {
                 listener.unbind();
-                //simpleShotListener.bind();
                 primaryStage.toFront();
-                /*for (Step s : steps){
-                    addStep(s);
-                }*/
-                //stepsContainer.getChildren().clear();
-                //reindex();
-            }, steps);
+            });
         });
 
 
@@ -226,17 +173,6 @@ public class MainController implements Initializable {
         helper = PopupHelper.get();
     }
 
-    private void reindex(){
-        int i = 1;
-        for (Step s : steps){
-            s.setPosition(i);
-            i++;
-        }
-    }
-
-    private void addStep(){
-        addStep(new Step(steps.size()+1));
-    }
 
     private void addStep(Step s){
         addStep(steps.size(), s);
@@ -245,42 +181,19 @@ public class MainController implements Initializable {
     private void addStep(int index, final Step s){
         if(steps.size() == 1 && !steps.get(0).hasGif() && s.hasGif()){
             steps.get(0).setImage(s.getGif());
-            //stepsContainer.getChildren().remove(0);
         }
         else {
-            //steps.add(index,s);
-
-            reindex();
+            if(s.getPosition() == 0)
+                s.setPosition(steps.size());
 
             Platform.runLater(() -> {
                 stepsContainer.getChildren().add(index, s.getBody());
                 scrollPane.setVvalue(1.0d);
-                reindex();
             });
 
-            s.onMoveUpRequest(position -> {
-                if (position > 1) {
-                    Step target = steps.get(position - 1);
-                    stepsContainer.getChildren().remove(position - 1);
-                    stepsContainer.getChildren().add(position - 2, target.getBody());
-                    //steps.remove(position-1);
-                    //steps.add(position-2,target);
-                    steps.unshift(position - 1);
-                    reindex();
-                }
-            });
+            s.onMoveUpRequest(position -> swapSteps(position));
 
-            s.onMoveDownRequest(position -> {
-                if (position < steps.size()) {
-                    Step target = steps.get(position - 1);
-                    stepsContainer.getChildren().remove(position - 1);
-                    stepsContainer.getChildren().add(position, target.getBody());
-                    //steps.remove(position-1);
-                    //steps.add(position,target);
-                    steps.shift(position - 1);
-                    reindex();
-                }
-            });
+            s.onMoveDownRequest(position -> swapSteps(position + 1));
 
             s.onShotRequest(event -> {
 
@@ -301,26 +214,36 @@ public class MainController implements Initializable {
 
                 listener.onGifGenerating(s::setLoading);
 
-                listener.onGifGenerated(new Callback1<String>() {
-                    @Override
-                    public void call(String arg0) {
-                        s.setImage(arg0);
-                        Platform.runLater(() -> {
-                            primaryStage.toFront();
-                            helper.hide();
-                        });
+                listener.onGifGenerated((path) -> {
+                    s.setImage(path);
+                    Platform.runLater(() -> {
+                        primaryStage.toFront();
+                        helper.hide();
+                    });
 
-                        listener.unbind();
-                    }
+                    listener.unbind();
                 });
             });
 
-            s.onDeleteRequest(() -> {
-                reindex();
-                steps.remove(s);
-                stepsContainer.getChildren().remove(s.getPosition() - 1);
-                reindex();
+            s.onDeleteRequest((position) -> {
+                steps.remove(position - 1);
+                for(int i = position - 1; i < steps.size(); i++){
+                    steps.get(i).setPosition(i + 1);
+                }
             });
+        }
+    }
+
+
+    private void swapSteps(int position){
+        if(position > 1 && position <= steps.size()){
+            Step self = steps.get(position - 1);
+            stepsContainer.getChildren().remove(position - 1);
+            stepsContainer.getChildren().add(position - 2, self.getBody());
+
+            steps.unshift(position - 1);
+            steps.get(position - 1).setPosition(position);
+            self.setPosition(position - 1);
         }
     }
 

@@ -5,6 +5,6 @@ package scenarii.dirtycallbacks;
  * Simulate an empty (0 args) λ-expression
  */
 @FunctionalInterface
-public interface  EmptyCallback {
+public interface Callback {
     void accept();
 }

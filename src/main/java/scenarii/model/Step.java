@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import org.pegdown.PegDownProcessor;
 import scenarii.controllers.ClipBoardActionsHandler;
-import scenarii.dirtycallbacks.EmptyCallback;
+import scenarii.dirtycallbacks.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -187,8 +187,8 @@ public class Step {
         cameraIcon.setOnMouseClicked(eventHandler);
     }
 
-    public void onDeleteRequest(final EmptyCallback callback){
-        trash.setOnMouseClicked(event -> callback.accept());
+    public void onDeleteRequest(final Consumer<Integer> callback){
+        trash.setOnMouseClicked(event -> callback.accept(position));
     }
 
     public void onMoveUpRequest(final Consumer<Integer> callback){
