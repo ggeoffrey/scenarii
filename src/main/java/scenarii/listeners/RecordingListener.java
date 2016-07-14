@@ -20,57 +20,39 @@ public class RecordingListener extends NativeEventListener{
 
     private final Overlay overlay;
     private Camera camera;
-    //private Stage window;
 
     private boolean ctrlKey;
-
     private boolean isResizing;
-
     private NativeMouseEvent mousePosition;
-    private NativeMouseEvent mouseOrigin;
-
-
     private boolean batchRecord;
-
     private int escCount;
+
 
     // Callbacks
 
+    private Callback onRecordEnd;
     private Consumer<String> onGifGenerated;
-    private Callback onGifGenerating;
-    //private Callback1<ArrayList<Step>> onBatchGenerated;
-    private Callback onBatchGenerated;
-    private Callback onCancel;
-
+    private Callback cameraInstanceStopper;
 
     // Accumulators
-    private ObservableArrayList<Step> stepsAccumulator;
+    private ObservableArrayList<Step> steps;
     //-----------
 
 
     //private SynchronisedThreadResultCollector<Step> collector;
 
 
-    public RecordingListener(Overlay overlay, Camera camera) {
+    public RecordingListener(Overlay overlay, Camera camera, ObservableArrayList<Step> steps, Callback onRecordEnd) {
         this.overlay = overlay;
         this.camera = camera;
 
         batchRecord = false;
         escCount = 0;
-        stepsAccumulator = new ObservableArrayList<>();
+        this.steps = steps;
+        this.onRecordEnd = onRecordEnd;
     }
 
 
-    public void onGifGenerated(Consumer<String> callback){
-        onGifGenerated = callback;
-    }
-    public void onGifGenerating(Callback callback){
-        onGifGenerating = callback;
-    }
-
-    public void setOnCancel(Callback callback){
-        onCancel = callback;
-    }
     @Override
     public void nativeMouseMoved(final NativeMouseEvent nativeMouseEvent) {
 
@@ -78,7 +60,7 @@ public class RecordingListener extends NativeEventListener{
 
         overlay.toFront();
 
-        if(ctrlKey && !camera.isRecording()){
+        if(ctrlKey && !camera.isRecording() && !isResizing){
             Point overlayPosition = overlay.getPosition();
             Point center = new Point(overlay.getCenter());
             center.translate(
@@ -87,18 +69,17 @@ public class RecordingListener extends NativeEventListener{
             );
             Point mouse = new Point(nativeMouseEvent.getX(), nativeMouseEvent.getY());
 
+            isResizing = true;
             final double xo = center.getX();
             final double yo = center.getY();
             final double xc = mouse.getX();
             final double yc = mouse.getY();
 
-            if(!isResizing) {
-                isResizing = true;
-                Platform.runLater(() -> {
-                    overlay.distort(xo, yo, xc, yc);
-                    isResizing = false;
-                });
-            }
+            Platform.runLater(() -> {
+                overlay.distort(xo, yo, xc, yc);
+                isResizing = false;
+            });
+
         }
         else{
             Platform.runLater(() -> overlay.setPosition(nativeMouseEvent));
@@ -108,11 +89,10 @@ public class RecordingListener extends NativeEventListener{
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
         switch (nativeKeyEvent.getKeyCode()){
-            case 29:
+            case 29: // ctrl
                 ctrlKey = true;
-                mouseOrigin = mousePosition;
                 break;
-            case 56:
+            case 56: // alt?
                 break;
             default:
                 break;
@@ -125,77 +105,41 @@ public class RecordingListener extends NativeEventListener{
         switch (nativeKeyEvent.getKeyCode()){
 
             case 1: // ESC
-                if(!batchRecord){
-                    Platform.runLater(() -> {
-                        if(camera.isRecording()){
+                escCount++;
+                if(camera.isRecording())
+                    cameraInstanceStopper.accept();
 
-                            if(onGifGenerating!=null)
-                                onGifGenerating.accept();
-
-                            new Thread(() -> {
-                                camera.stopRecord();
-                                if(onGifGenerated != null)
-                                    onGifGenerated.accept(camera.getLastImageProduced());
-                            }).start();
-                        }
-                        else{
-                            onCancel.accept();
-                        }
-                        overlay.showForDistort();
-                        overlay.hide();
-                    });
+                if(escCount > 1 || !batchRecord){
+                    overlay.hide();
+                    if(onRecordEnd != null) onRecordEnd.accept();
+                    unbind();
+                    batchRecord = false;
                 }
-                else{ // batchRecord : true
-                    if(camera.isRecording()){
-                        final Camera c = camera;
-                        RecordingListener $this = this;
-                        new Thread(() -> {
-                            Step s = new Step(1);
-                            s.setLoading();
-                            stepsAccumulator.add(s);
-                            camera.stopRecord(s::setImage);
-                            // replace the camera with a clone of the old one
+                else overlay.showBorder();
 
-                            /* thus, the old camera will do
-                                it's job in the background
-                                and be GCed when done.
-                              */
-                        }).start();
-                        $this.camera = new Camera(camera);
-                        overlay.showForDistort();
-                        escCount++;
-                    }
-                    else if(escCount >= 2){
-                        batchRecord = false;
-                        if(onBatchGenerated != null){
-                            Platform.runLater(() -> {
-                                overlay.hide();
-                                onBatchGenerated.accept();
-                            });
-                        }
-                    }
-                    else {
-                        escCount++;
-                    }
-                }
                 break;
             case 29:
                 ctrlKey = false;
-                mouseOrigin = null;
                 break;
             case 56: // alt
-                escCount = Math.max(0, escCount-1);
-                boolean cameraIsOff = !camera.isRecording();
-                if(cameraIsOff){
-                    Platform.runLater(overlay::hideForDistort);
-                    camera.startRecord();
+                escCount = escCount > 0 ? escCount-1 : 0;
+                overlay.hideBorder();
+                if(batchRecord){
+                    Step s = new Step();
+                    s.setLoading();
+                    steps.add(s);
+                    cameraInstanceStopper = camera.record(s::setImage);
                 }
+                else {
+                    cameraInstanceStopper = camera.record(onGifGenerated);
+                    onGifGenerated = (path)->{
+                        System.err.println("WARNING: Attempting to call an already consumed callback.");
+                        System.err.println("         (RecordingListener::nativeKeyReleased::λ.onGifGenerated)");
+                    };
+                }
+
                 break;
         }
-    }
-
-    @Override
-    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
     }
 
 
@@ -204,24 +148,23 @@ public class RecordingListener extends NativeEventListener{
         nativeMouseMoved(nativeMouseEvent);
     }
 
-    public void initShot(){
+    public void shotSequence(Consumer<String> callback){
         overlay.show();
-        overlay.showForDistort();
+        overlay.showBorder();
         bind();
+        this.onGifGenerated = callback;
     }
 
-    /*public void batchRecord(Callback1<ArrayList<Step>> onBatchGenerated){
+    public void batchRecord(){
         batchRecord = true;
-        this.onBatchGenerated = onBatchGenerated;
-        stepsAccumulator.clear();
-        initShot();
-    }*/
+        shotSequence((path)->{
+            System.err.println("WARNING: Attempting to call onGifGenerated callback while recording in batch.");
+            System.err.println("         A batch pushes Steps to the model and should not provide a callback.");
+            System.err.println("         (RecordingListener::batchRecord::shotSequence.call(λpath.null)");
+        });
+    }
 
-    public void batchRecord(ObservableArrayList<Step> target, Callback callback){
-        batchRecord = true;
-        onBatchGenerated = callback;
-        stepsAccumulator = target;
-        //collector.setValuesCollector(target);
-        initShot();
+    @Override
+    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
     }
 }

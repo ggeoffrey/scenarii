@@ -30,6 +30,7 @@ class GifSequenceWriter {
     private ImageWriteParam imageWriteParam;
     private IIOMetadata imageMetaData;
 
+
     /**
      * Creates a new GifSequenceWriter
      *

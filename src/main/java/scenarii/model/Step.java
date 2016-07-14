@@ -57,11 +57,6 @@ public class Step {
 
     }
 
-    public Step(int position) {
-        this.position = position;
-        build();
-    }
-
     private void build(){
 
         if(spinner == null){

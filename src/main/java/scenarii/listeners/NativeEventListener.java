@@ -45,12 +45,12 @@ public abstract class NativeEventListener implements NativeMouseMotionListener, 
     }
 
 
-    void bind(){
+    protected void bind(){
         GlobalScreen.addNativeMouseMotionListener(this);
         GlobalScreen.addNativeKeyListener(this);
     }
 
-    public void unbind(){
+    protected void unbind(){
         GlobalScreen.removeNativeKeyListener(this);
         GlobalScreen.removeNativeMouseMotionListener(this);
     }

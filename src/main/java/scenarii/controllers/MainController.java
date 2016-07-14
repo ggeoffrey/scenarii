@@ -105,12 +105,19 @@ public class MainController implements Initializable {
 
         NativeEventListener.bindGlobal();
 
-        listener = new RecordingListener(overlay, camera);
+        listener = new RecordingListener(overlay, camera, steps, ()-> Platform.runLater(()->{
+            helper.hide();
+            retrievePrimaryStage();
+            primaryStage.toFront();
+            scrollPane.setVvalue(1.0d);
+        }));
 
         new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
             steps.add(step);
             scrollPane.setVvalue(1.0d);
-        }));
+        }), ()->{
+            System.err.println("ERROR: <TODO> should display a popup or something else.");
+        });
 
 
         open.setOnAction(event -> {
@@ -155,10 +162,7 @@ public class MainController implements Initializable {
 
         batchRecord.setOnAction(event -> {
             primaryStage.toBack();
-            listener.batchRecord(steps, () -> {
-                listener.unbind();
-                primaryStage.toFront();
-            });
+            listener.batchRecord();
         });
 
 
@@ -184,45 +188,25 @@ public class MainController implements Initializable {
         }
         else {
             if(s.getPosition() == 0)
-                s.setPosition(steps.size());
+                s.setPosition(index + 1);
 
             Platform.runLater(() -> {
                 stepsContainer.getChildren().add(index, s.getBody());
                 scrollPane.setVvalue(1.0d);
             });
 
-            s.onMoveUpRequest(position -> swapSteps(position));
-
+            s.onMoveUpRequest(this::swapSteps);
             s.onMoveDownRequest(position -> swapSteps(position + 1));
 
             s.onShotRequest(event -> {
-
+                s.setLoading();
                 if (s.getPosition() < 3) {
                     helper.display();
                 }
                 retrievePrimaryStage();
                 primaryStage.toBack();
-
-                listener.initShot();
-
-                s.setLoading();
-
-                listener.setOnCancel(() -> Platform.runLater(() -> {
-                    helper.hide();
-                    s.setUnLoading();
-                }));
-
-                listener.onGifGenerating(s::setLoading);
-
-                listener.onGifGenerated((path) -> {
-                    s.setImage(path);
-                    Platform.runLater(() -> {
-                        primaryStage.toFront();
-                        helper.hide();
-                    });
-
-                    listener.unbind();
-                });
+                listener.shotSequence(s::setImage);
+                scrollPane.setVvalue(1.0d);
             });
 
             s.onDeleteRequest((position) -> {
@@ -233,7 +217,6 @@ public class MainController implements Initializable {
             });
         }
     }
-
 
     private void swapSteps(int position){
         if(position > 1 && position <= steps.size()){

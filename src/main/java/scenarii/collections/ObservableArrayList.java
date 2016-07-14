@@ -24,11 +24,6 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         super.add(index - 1,item);
     }
 
-    public void shift(int index){
-        T item = super.remove(index);
-        super.add(index + 1,item);
-    }
-
     @Override
     public boolean add(T t) {
         boolean success = super.add(t);

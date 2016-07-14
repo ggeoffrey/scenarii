@@ -37,21 +37,25 @@ public class Overlay {
     }
 
     public void show(){
-        top.show();
-        bottom.show();
+        Platform.runLater(()->{
+            top.show();
+            bottom.show();
+        });
     }
 
     public void hide(){
-        top.hide();
-        bottom.hide();
+        Platform.runLater(()->{
+            top.hide();
+            bottom.hide();
+        });
     }
 
-    public void showForDistort(){
+    public void showBorder(){
         top.showForDistort();
         bottom.showForDistort();
     }
 
-    public void hideForDistort(){
+    public void hideBorder(){
         top.hideForDistort();
         bottom.hideForDistort();
     }
