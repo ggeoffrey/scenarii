@@ -109,12 +109,12 @@ public class MainController implements Initializable {
             helper.hide();
             retrievePrimaryStage();
             primaryStage.toFront();
-            scrollPane.setVvalue(1.0d);
+            scrollDown();
         }));
 
         new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
             steps.add(step);
-            scrollPane.setVvalue(1.0d);
+            scrollDown();
         }), ()->{
             System.err.println("ERROR: <TODO> should display a popup or something else.");
         });
@@ -135,7 +135,7 @@ public class MainController implements Initializable {
 
             steps.clear();
             stepsContainer.getChildren().clear();
-            sc.getSteps().forEach(this::addStep);
+            sc.getSteps().forEach((step -> steps.add(step)));
         });
 
 
@@ -192,7 +192,7 @@ public class MainController implements Initializable {
 
             Platform.runLater(() -> {
                 stepsContainer.getChildren().add(index, s.getBody());
-                scrollPane.setVvalue(1.0d);
+                scrollDown();
             });
 
             s.onMoveUpRequest(this::swapSteps);
@@ -206,7 +206,7 @@ public class MainController implements Initializable {
                 retrievePrimaryStage();
                 primaryStage.toBack();
                 listener.shotSequence(s::setImage);
-                scrollPane.setVvalue(1.0d);
+                scrollDown();
             });
 
             s.onDeleteRequest((position) -> {
@@ -276,5 +276,24 @@ public class MainController implements Initializable {
                 ? (Stage) root.getScene().getWindow()
                 : null;
         return primaryStage;
+    }
+
+    private boolean scrolling = false;
+    private void scrollDown(){
+        if (!scrolling) {
+            scrolling = true;
+            new Thread(()->{
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("done");
+                Platform.runLater(() -> {
+                    scrollPane.setVvalue(scrollPane.getVmax());
+                    scrolling = false;
+                });
+            }).start();
+        }
     }
 }
