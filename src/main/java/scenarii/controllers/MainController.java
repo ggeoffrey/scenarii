@@ -138,7 +138,6 @@ public class MainController implements Initializable {
             sc.getSteps().forEach((step -> steps.add(step)));
         });
 
-
         export.setOnAction(event -> exportToHtml());
 
         exportTo.setOnAction(event -> {
@@ -159,12 +158,10 @@ public class MainController implements Initializable {
 
         compress.setOnAction(event -> compress());
 
-
         batchRecord.setOnAction(event -> {
             primaryStage.toBack();
             listener.batchRecord();
         });
-
 
         ClipBoardActionsHandler clipBoardListener = new ClipBoardActionsHandler();
         title.setOnKeyPressed(clipBoardListener);
