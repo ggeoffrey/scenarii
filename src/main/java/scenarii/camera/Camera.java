@@ -66,6 +66,7 @@ public class Camera {
                 isRecording = true;
                 final Timer timer = new Timer(true);
                 MutableWrappedValue<Integer> seqencesCount = new MutableWrappedValue<>(0);
+                int delay = (int) fpsToDelay(fps);
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
@@ -79,7 +80,7 @@ public class Camera {
                             System.err.println(e.getMessage());
                         }
                     }
-                }, 0, (int)fpsToDelay(fps));
+                }, 100, delay);
 
 
                 long start = new Date().getTime();

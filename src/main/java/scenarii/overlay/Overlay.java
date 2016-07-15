@@ -21,10 +21,13 @@ public class Overlay {
     private final OverlaySection top;
     private final OverlaySection bottom;
 
+    private boolean displayCenterCircle;
+
     public Overlay() {
         this.top = new OverlaySection(SectionOrientation.TOP);
         this.bottom = new OverlaySection(SectionOrientation.BOTTOM);
         alwaysOnTopSupported = supportAlwaysOnTop();
+        displayCenterCircle = true;
     }
 
     public void setPosition(NativeMouseEvent event){
@@ -43,6 +46,8 @@ public class Overlay {
         });
     }
 
+
+
     public void hide(){
         Platform.runLater(()->{
             top.hide();
@@ -50,15 +55,28 @@ public class Overlay {
         });
     }
 
+    /*public void hideBorder(){
+        top.hideBorder();
+        bottom.hideBorder();
+        if (!displayCenterCircle) {
+            top.hideCircle();
+            bottom.hideCircle();
+        }
+    }*/
+
     public void showBorder(){
-        top.showForDistort();
-        bottom.showForDistort();
+        top.showBorder();
+        bottom.showBorder();
+        if (!displayCenterCircle) {
+            top.showCircle();
+            bottom.showCircle();
+        }
     }
 
     public void hideBorder(){
-        top.hideForDistort();
-        bottom.hideForDistort();
     }
+
+
 
     public void distort(double xOrigin, double yOrigin, double xCurrent, double yCurrent){
 
@@ -116,5 +134,10 @@ public class Overlay {
     		supported = false;
     	}
     	return supported;
+    }
+
+
+    public void setDisplayCenterCircle(boolean displayCenterCircle) {
+        this.displayCenterCircle = displayCenterCircle;
     }
 }

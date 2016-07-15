@@ -43,8 +43,6 @@ class OverlaySection extends Stage {
             System.err.println("Unable to find the setAlwaysOnTop JavaFX method. You should"
                                 + " update your Java version. Skipping.");
         }
-       
-        
 
         this.displayMode = orientation;
 
@@ -134,18 +132,24 @@ class OverlaySection extends Stage {
 
     }
 
-
-
-    public void showForDistort(){
+    public void showBorder(){
         leftLine.setVisible(true);
         rightLine.setVisible(true);
         centerLine.setVisible(true);
     }
 
-    public void hideForDistort(){
+    public void hideBorder(){
         leftLine.setVisible(false);
         rightLine.setVisible(false);
         centerLine.setVisible(false);
+    }
+
+    public void showCircle(){
+        arc.setVisible(true);
+    }
+
+    public void hideCircle(){
+        arc.setVisible(false);
     }
    
     

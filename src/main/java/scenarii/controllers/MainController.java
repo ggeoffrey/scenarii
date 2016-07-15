@@ -119,6 +119,10 @@ public class MainController implements Initializable {
         });
         fpsSelector.setValue(defaultFps);
 
+        circleCheckBox.setOnAction(event -> {
+            overlay.setDisplayCenterCircle(circleCheckBox.isSelected());
+        });
+
         NativeEventListener.bindGlobal();
 
         listener = new RecordingListener(overlay, camera, steps, ()-> Platform.runLater(()->{
