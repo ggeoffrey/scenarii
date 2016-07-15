@@ -22,10 +22,10 @@ public class RecordingListener extends NativeEventListener{
     private Camera camera;
 
     private boolean ctrlKey;
-    private boolean isResizing;
-    private NativeMouseEvent mousePosition;
     private boolean batchRecord;
     private int escCount;
+
+    private boolean isResizing = false;
 
 
     // Callbacks
@@ -37,10 +37,6 @@ public class RecordingListener extends NativeEventListener{
     // Accumulators
     private ObservableArrayList<Step> steps;
     //-----------
-
-
-    //private SynchronisedThreadResultCollector<Step> collector;
-
 
     public RecordingListener(Overlay overlay, Camera camera, ObservableArrayList<Step> steps, Callback onRecordEnd) {
         this.overlay = overlay;
@@ -56,33 +52,32 @@ public class RecordingListener extends NativeEventListener{
     @Override
     public void nativeMouseMoved(final NativeMouseEvent nativeMouseEvent) {
 
-        mousePosition = nativeMouseEvent;
-
         overlay.toFront();
 
-        if(ctrlKey && !camera.isRecording() && !isResizing){
-            Point overlayPosition = overlay.getPosition();
-            Point center = new Point(overlay.getCenter());
-            center.translate(
-                    (int) overlayPosition.getX(),
-                    (int) overlayPosition.getY()
-            );
-            Point mouse = new Point(nativeMouseEvent.getX(), nativeMouseEvent.getY());
+        if(!isResizing){
+            if(ctrlKey && !camera.isRecording()){
+                isResizing = true;
+                Point overlayPosition = overlay.getPosition();
+                Point center = new Point(overlay.getCenter());
+                center.translate(
+                        (int) overlayPosition.getX(),
+                        (int) overlayPosition.getY()
+                );
+                Point mouse = new Point(nativeMouseEvent.getX(), nativeMouseEvent.getY());
 
-            isResizing = true;
-            final double xo = center.getX();
-            final double yo = center.getY();
-            final double xc = mouse.getX();
-            final double yc = mouse.getY();
+                final double xo = center.getX();
+                final double yo = center.getY();
+                final double xc = mouse.getX();
+                final double yc = mouse.getY();
 
-            Platform.runLater(() -> {
-                overlay.distort(xo, yo, xc, yc);
-                isResizing = false;
-            });
-
-        }
-        else{
-            Platform.runLater(() -> overlay.setPosition(nativeMouseEvent));
+                Platform.runLater(() -> {
+                    overlay.distort(xo, yo, xc, yc);
+                    isResizing = false;
+                });
+            }
+            else{
+                Platform.runLater(() -> overlay.setPosition(nativeMouseEvent));
+            }
         }
     }
 
@@ -137,7 +132,6 @@ public class RecordingListener extends NativeEventListener{
                         System.err.println("         (RecordingListener::nativeKeyReleased::λ.onGifGenerated)");
                     };
                 }
-
                 break;
         }
     }

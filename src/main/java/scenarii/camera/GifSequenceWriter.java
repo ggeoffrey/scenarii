@@ -10,12 +10,16 @@ package scenarii.camera;
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
 
+import org.w3c.dom.Node;
+
 import javax.imageio.*;
 import javax.imageio.metadata.*;
 import javax.imageio.stream.*;
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 
 /**
@@ -44,7 +48,7 @@ class GifSequenceWriter {
     public GifSequenceWriter(
             ImageOutputStream outputStream,
             int imageType,
-            int timeBetweenFramesMS,
+            double timeBetweenFramesMS,
             boolean loopContinuously) throws IOException {
         // my method to create a writer
         gifWriter = getWriter();
@@ -70,9 +74,10 @@ class GifSequenceWriter {
         graphicsControlExtensionNode.setAttribute(
                 "transparentColorFlag",
                 "FALSE");
+        System.out.println("timeBetweenFramesMS: " + (timeBetweenFramesMS / 10));
         graphicsControlExtensionNode.setAttribute(
                 "delayTime",
-                Integer.toString(timeBetweenFramesMS / 10));
+                Integer.toString((int)(timeBetweenFramesMS/10)));
         graphicsControlExtensionNode.setAttribute(
                 "transparentColorIndex",
                 "0");
@@ -158,39 +163,38 @@ class GifSequenceWriter {
         return (node);
     }
 
-    /**
-     public GifSequenceWriter(
-     BufferedOutputStream outputStream,
-     int imageType,
-     int timeBetweenFramesMS,
-     boolean loopContinuously) {
-     */
-    /*public static void main(String[] args) throws Exception {
-        if (args.length > 1) {
-            // grab the output image type from the first image in the sequence
-            BufferedImage firstImage = ImageIO.read(new File(args[0]));
+    public void fixFrameRate(String path, long time, Consumer<String> callback){
+        try {
+            File file = new File(path);
+            // Get GIF reader
+            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+            // Give it the stream to decode from
+            reader.setInput(ImageIO.createImageInputStream(file));
+            int numImages = reader.getNumImages(true);
 
-            // create a new BufferedOutputStream with the last argument
-            ImageOutputStream output =
-                    new FileImageOutputStream(new File(args[args.length - 1]));
+            ImageOutputStream ios = new FileImageOutputStream(new File(path));
+            // Get GIF writer that's compatible with reader
+            GifSequenceWriter writer = new GifSequenceWriter(
+                    ios,
+                    BufferedImage.TYPE_INT_RGB,
+                    time/numImages,
+                    true);
+            // Give it the stream to encode to
 
-            // create a gif sequence with the type of the first image, 1 second
-            // between frames, which loops continuously
-            GifSequenceWriter writer =
-                    new GifSequenceWriter(output, firstImage.getType(), 1, false);
-
-            // write out the first image to our sequence...
-            writer.writeToSequence(firstImage);
-            for(int i=1; i<args.length-1; i++) {
-                BufferedImage nextImage = ImageIO.read(new File(args[i]));
-                writer.writeToSequence(nextImage);
+            System.out.println("NumImages: "+numImages);
+            System.out.println("Δ: "+ time/numImages);
+            for (int i = 0; i < numImages; i++) {
+                // Get input image
+                BufferedImage frameIn = reader.read(i);
+                writer.writeToSequence(frameIn);
             }
-
             writer.close();
-            output.close();
-        } else {
-            System.out.println(
-                    "Usage: java GifSequenceWriter [list of gif files] [output file]");
+            callback.accept(path);
         }
-    }*/
+        catch (IOException e) {
+            System.err.println("ERROR: Unable to read generated GIF file to fix... suspicious ...");
+            System.err.println("       (GifSequenceWriter::fixFrameRate) ==>");
+            System.err.println(e.getMessage());
+        }
+    }
 }

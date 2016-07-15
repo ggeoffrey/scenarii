@@ -26,27 +26,25 @@ public class Camera {
     private String folderPath;
     private static int shotCounter = 0;
     private boolean isRecording;
-    private int delay;
+    private int fps;
 
-    private Consumer<String> onGifGenerated;
     private Robot robot;
 
 
-    public Camera(Overlay overlay){
-        this(overlay, new Date().getTime(), 30);
+    public Camera(Overlay overlay, int fps){
+        this(overlay, new Date().getTime(), fps);
     }
 
     public Camera(Camera camera){
-        this(camera.overlay, camera.uniqueName, 30);
+        this(camera.overlay, camera.uniqueName, camera.fps);
     }
 
-    public Camera(Overlay overlay, long uniqueName, int fps) {
+    private Camera(Overlay overlay, long uniqueName, int fps) {
         this.overlay = overlay;
         this.uniqueName = uniqueName;
         this.folderPath = System.getProperty("user.home")+"/scenarii-snaps/"+uniqueName;
         shotCounter = Math.max(0, shotCounter);
-        delay = fpsToDelay(fps);
-
+        this.fps = fps;
         isRecording = false;
         try {
             robot = new Robot();
@@ -62,12 +60,11 @@ public class Camera {
         if(isRecording)
             System.err.println("WARNING: Tried to record more than one sequence at a time (Camera::record).");
         else{
-            isRecording = true;
             String path = getGifName();
-            GifSequenceWriter writer = initGifWrite(delay, path).orElse(null);
+            GifSequenceWriter writer = initGifWrite(fps, path).orElse(null);
             if(writer != null){
+                isRecording = true;
                 final Timer timer = new Timer(true);
-                boolean shouldStop = false;
                 MutableWrappedValue<Integer> seqencesCount = new MutableWrappedValue<>(0);
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
@@ -82,15 +79,19 @@ public class Camera {
                             System.err.println(e.getMessage());
                         }
                     }
-                }, 0, delay);
+                }, 0, (int)fpsToDelay(fps));
 
+
+                long start = new Date().getTime();
 
                 stopper = ()->{
                     timer.cancel();
                     new Thread(()->{
                         try {
+                            long stop = new Date().getTime();
                             Thread.sleep(250);
                             writer.close();
+                            writer.fixFrameRate(path, stop-start, callback);
                         } catch (IOException e) {
                             System.err.println("ERROR: unable to close the writer after writing a frame sequence");
                             System.err.println("       of "+ seqencesCount.get() +" frames. ");
@@ -105,7 +106,7 @@ public class Camera {
                     }).start();
 
                     isRecording = false;
-                    callback.accept(path);
+
                 };
             }
         }
@@ -114,7 +115,7 @@ public class Camera {
 
     public String singleShot() throws IOException {
         String imagePath = getGifName();
-        GifSequenceWriter writer = initGifWrite(delay, imagePath).orElse(null);
+        GifSequenceWriter writer = initGifWrite(fps, imagePath).orElse(null);
         if(writer != null){
             writer.writeToSequence(getRawImage());
             writer.close();
@@ -128,8 +129,8 @@ public class Camera {
      * @param fps
      * @return time between two frames
      */
-    private int fpsToDelay(int fps){
-        return (int) ((1./fps) * 1000);
+    private double fpsToDelay(int fps){
+        return (1./fps) * 1000;
     }
 
     public boolean isRecording() {
@@ -214,7 +215,7 @@ public class Camera {
     }
 
 
-    private Optional<GifSequenceWriter> initGifWrite(int delay, String path){
+    private Optional<GifSequenceWriter> initGifWrite(int fps, String path){
         ImageOutputStream output = null;
         GifSequenceWriter writer = null;
         Optional<GifSequenceWriter> returnValue = null;
@@ -225,13 +226,14 @@ public class Camera {
             output = new FileImageOutputStream(new File(path));
 
             // Make a GifWriter with a bigger delay (by 4) seems appropriate.
-            writer = new GifSequenceWriter(output, BufferedImage.TYPE_INT_RGB, delay*4, true);
-
+            System.out.println(fps + "->" + fpsToDelay(fps));
+            writer = new GifSequenceWriter(output, BufferedImage.TYPE_INT_RGB, fpsToDelay(fps), true);
             returnValue = Optional.of(writer);
 
         }catch (IOException e){
             System.err.println("ERROR: unable to init gif writing (Camera::initGifWrite) ==> ");
             System.err.println(e.getMessage());
+
             returnValue = Optional.empty();
             somethingBadHappend = true;
         }
@@ -249,5 +251,14 @@ public class Camera {
             }
         }
         return returnValue;
+    }
+
+
+    public int getFps() {
+        return fps;
+    }
+
+    public void setFps(int fps) {
+        this.fps = fps;
     }
 }

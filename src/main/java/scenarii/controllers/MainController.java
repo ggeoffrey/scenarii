@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -28,6 +30,7 @@ import scenarii.overlay.Overlay;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
@@ -50,6 +53,9 @@ public class MainController implements Initializable {
     @FXML private VBox stepsContainer;
     @FXML private Button addStep;
     @FXML private ProgressIndicator progress;
+
+    @FXML private CheckBox circleCheckBox;
+    @FXML private ComboBox<Integer> fpsSelector;
 
 
     private Stage primaryStage;
@@ -92,6 +98,10 @@ public class MainController implements Initializable {
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
 
+        final int defaultFps = 24;
+        fpsSelector.getItems().addAll(3,6,12,18,24,30);
+
+
         steps = new ObservableArrayList<>();
         steps.onAdd(this::addStep);
 
@@ -101,7 +111,13 @@ public class MainController implements Initializable {
         addStep.setOnAction(event -> steps.add(new Step()));
 
         Overlay overlay = new Overlay();
-        Camera camera = new Camera(overlay);
+        Camera camera = new Camera(overlay, defaultFps);
+
+        fpsSelector.setOnAction(event -> {
+            int value = fpsSelector.getSelectionModel().getSelectedItem();
+            camera.setFps(value);
+        });
+        fpsSelector.setValue(defaultFps);
 
         NativeEventListener.bindGlobal();
 
@@ -285,12 +301,28 @@ public class MainController implements Initializable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("done");
                 Platform.runLater(() -> {
                     scrollPane.setVvalue(scrollPane.getVmax());
                     scrolling = false;
                 });
             }).start();
+        }
+    }
+
+
+
+    private Optional<Integer> lasyIntParse(String s){
+        try{
+            String intvalue = s.replaceAll("\\d+", "");
+            if(intvalue.length()>0)
+                return Optional.of(Integer.parseInt(intvalue));
+            else return Optional.empty();
+        }
+        catch (Exception e){
+            System.err.println("ERROR: Unable to parse an internal String to int where it should work.");
+            System.err.println("       (MainController::lazyIntParse) ==>");
+            System.err.println(e.getMessage());
+            return Optional.empty();
         }
     }
 }
