@@ -5,7 +5,10 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -61,6 +64,7 @@ public class MainController implements Initializable {
 
     @FXML private CheckBox circleCheckBox;
     @FXML private ComboBox<Integer> fpsSelector;
+    @FXML private Button configureButton;
 
 
     private Stage primaryStage;
@@ -71,6 +75,9 @@ public class MainController implements Initializable {
     private BooleanProperty targetFolderPresent;
     private BooleanBinding canExportOrCompress;
     private PopupHelper helper;
+
+    private SettingsController settingsController;
+    private Stage settingsStage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -221,6 +228,33 @@ public class MainController implements Initializable {
         helper = PopupHelper.get();
 
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+
+        try {
+            URL loc = getClass().getResource("/res/settings.fxml");
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(loc);
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
+
+            BorderPane config = loader.load(loc.openStream());
+            settingsController = loader.getController();
+            settingsController.setMainControllerRef(this);
+
+            settingsStage = new Stage();
+            settingsController.setCorrespondingStage(settingsStage);
+
+            settingsStage.setScene(new Scene(config,450,200));
+            settingsStage.setResizable(false);
+            settingsStage.setTitle("Settings");
+        } catch (IOException e) {
+            System.err.println("ERROR: Unable to load settings view.");
+            System.err.println("       (MainController::configureButton::λ.onAction) ==>");
+            System.err.println(e.getMessage());
+        }
+
+        configureButton.setOnAction(event -> {
+            settingsStage.show();
+        });
 
     }
 
