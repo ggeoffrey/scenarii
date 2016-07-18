@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -105,7 +103,7 @@ public class MainController implements Initializable {
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
 
-        final int defaultFps = 24;
+        final int defaultFps = 30;
         fpsSelector.getItems().addAll(3,6,12,18,24,30);
 
 
@@ -250,7 +248,7 @@ public class MainController implements Initializable {
             s.onViewRequest(()->{
                 if(s.hasGif()){
                     try {
-                        Desktop.getDesktop().open(s.getImage());
+                        Desktop.getDesktop().browse(s.getImage().toURI());
                     } catch (IOException e) {
                         System.err.println("ERROR: Unable to open step's image in default desktop viewer");
                         System.err.println("       (Step::onViewRequest::λ.callback) ==>");
