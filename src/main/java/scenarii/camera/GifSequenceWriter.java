@@ -163,17 +163,17 @@ class GifSequenceWriter {
         return (node);
     }
 
-    public void fixFrameRate(String path, long time, Consumer<String> callback){
+    public static void fixFrameRate(String path, long time, Consumer<String> callback){
         try {
-            File file = new File(path);
-            File tempFile = new File(path + ".temp");
+            File tempfile = new File(path);
+            File file = new File(path+".gif");
             // Get GIF reader
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             // Give it the stream to decode from
-            reader.setInput(ImageIO.createImageInputStream(file));
+            reader.setInput(ImageIO.createImageInputStream(tempfile));
             int numImages = reader.getNumImages(true);
 
-            ImageOutputStream ios = new FileImageOutputStream(tempFile);
+            ImageOutputStream ios = new FileImageOutputStream(file);
             // Get GIF writer that's compatible with reader
             GifSequenceWriter writer = new GifSequenceWriter(
                     ios,
@@ -190,14 +190,16 @@ class GifSequenceWriter {
                 writer.writeToSequence(frameIn);
             }
             writer.close();
-            file.delete();
-            tempFile.renameTo(file);
+            tempfile.delete();
+            if(tempfile.exists()){
+                tempfile.deleteOnExit();
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            callback.accept(path);
+            callback.accept(file.getPath());
         }
         catch (IOException e) {
             System.err.println("ERROR: Unable to read generated GIF file to fix... suspicious ...");

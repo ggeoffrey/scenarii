@@ -92,7 +92,7 @@ public class Camera {
                             long stop = new Date().getTime();
                             Thread.sleep(250);
                             writer.close();
-                            writer.fixFrameRate(path, stop-start, callback);
+                            GifSequenceWriter.fixFrameRate(path, stop-start, callback);
                         } catch (IOException e) {
                             System.err.println("ERROR: unable to close the writer after writing a frame sequence");
                             System.err.println("       of "+ seqencesCount.get() +" frames. ");
@@ -145,7 +145,7 @@ public class Camera {
 
     private String getGifName(){
         // make a name for the current image.
-        String path = this.folderPath+"/shot-"+shotCounter+".gif";
+        String path = this.folderPath+"/shot-"+shotCounter+"";
         shotCounter++;
         return path;
     }
