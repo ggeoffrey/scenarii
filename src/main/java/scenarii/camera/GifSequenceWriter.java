@@ -183,13 +183,14 @@ class GifSequenceWriter {
             // Give it the stream to encode to
 
             System.out.println("NumImages: "+numImages);
-            System.out.println("Δ: "+ time/numImages);
+            System.out.println("Delta: "+ time/numImages);
             for (int i = 0; i < numImages; i++) {
                 // Get input image
                 BufferedImage frameIn = reader.read(i);
                 writer.writeToSequence(frameIn);
             }
             writer.close();
+            file.delete();
             tempFile.renameTo(file);
             callback.accept(path);
         }
