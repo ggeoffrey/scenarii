@@ -166,13 +166,14 @@ class GifSequenceWriter {
     public void fixFrameRate(String path, long time, Consumer<String> callback){
         try {
             File file = new File(path);
+            File tempFile = new File(path + ".temp");
             // Get GIF reader
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             // Give it the stream to decode from
             reader.setInput(ImageIO.createImageInputStream(file));
             int numImages = reader.getNumImages(true);
 
-            ImageOutputStream ios = new FileImageOutputStream(new File(path));
+            ImageOutputStream ios = new FileImageOutputStream(tempFile);
             // Get GIF writer that's compatible with reader
             GifSequenceWriter writer = new GifSequenceWriter(
                     ios,
@@ -189,6 +190,7 @@ class GifSequenceWriter {
                 writer.writeToSequence(frameIn);
             }
             writer.close();
+            tempFile.renameTo(file);
             callback.accept(path);
         }
         catch (IOException e) {
