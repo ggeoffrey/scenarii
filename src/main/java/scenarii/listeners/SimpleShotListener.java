@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 public class SimpleShotListener extends NativeEventListener {
 
-    private final Camera cameraOld;
+    private final Camera camera;
 
     private boolean ctrlKey;
     private boolean shiftKey;
@@ -27,8 +27,8 @@ public class SimpleShotListener extends NativeEventListener {
 
 
 
-    public SimpleShotListener(Camera cameraOld, Consumer<Step> onShot, Callback onError) {
-        this.cameraOld = cameraOld;
+    public SimpleShotListener(Camera camera, Consumer<Step> onShot, Callback onError) {
+        this.camera = camera;
         this.onShot = onShot;
         this.onError = onError;
         bind();
@@ -59,7 +59,7 @@ public class SimpleShotListener extends NativeEventListener {
                 if(ctrlKey && shiftKey){
                     Step s = new Step();
                     try{
-                        s.setImage(cameraOld.singleShot());
+                        s.setImage(camera.singleShot());
                         if(onShot != null)
                             onShot.accept(s);
                     } catch (IOException e){

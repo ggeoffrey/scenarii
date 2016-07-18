@@ -115,7 +115,7 @@ public class Camera {
     }
 
     public String singleShot() throws IOException {
-        String imagePath = getGifName();
+        String imagePath = getGifName() + ".gif";
         GifSequenceWriter writer = initGifWrite(fps, imagePath).orElse(null);
         if(writer != null){
             writer.writeToSequence(getRawImage());

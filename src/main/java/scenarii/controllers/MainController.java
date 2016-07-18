@@ -136,7 +136,7 @@ public class MainController implements Initializable {
             primaryStage.toFront();
             scrollDown();
             steps.stream()
-                    //.filter(Step::isLoading)
+                    //.filter(Step::isLoading)  // TODO
                     .forEach(Step::setUnLoading);
         }));
 
