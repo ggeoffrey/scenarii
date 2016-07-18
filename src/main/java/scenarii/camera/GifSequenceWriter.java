@@ -192,6 +192,11 @@ class GifSequenceWriter {
             writer.close();
             file.delete();
             tempFile.renameTo(file);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             callback.accept(path);
         }
         catch (IOException e) {
