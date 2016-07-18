@@ -152,14 +152,15 @@ public class Step {
     }
 
     public void setLoading(){
-        if (hasGif()) {
+        if(gif.getImage() != spinner){
             lastImage = gif.getImage();
             gif.setImage(spinner);
+            cameraIcon.setOpacity(0.);
         }
     }
 
     public void setUnLoading(){
-        if (!hasGif()) {
+        if (gif.getImage() == spinner) {
             setImage(lastImage);
             if(lastImage == null)
                 cameraIcon.setOpacity(1.);

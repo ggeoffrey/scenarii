@@ -54,9 +54,9 @@
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="global" BorderPane.alignment="CENTER">
          <center>
-            <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxWidth="-Infinity" prefWidth="800.0" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER_LEFT">
                <content>
-                  <VBox fx:id="stepsContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <VBox fx:id="stepsContainer" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefWidth="782.0" />
                </content>
             </ScrollPane>
          </center>

@@ -219,14 +219,12 @@ public class MainController implements Initializable {
         Platform.runLater(this::retrievePrimaryStage);
 
         helper = PopupHelper.get();
+
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
     }
 
 
-    /*
-    private void addStep(Step s){
-        addStep(steps.size(), s);
-    }
-    */
 
     private void addStep(int index, final Step s){
         if(steps.size() == 2 && !steps.get(0).hasGif() && s.hasGif()){
