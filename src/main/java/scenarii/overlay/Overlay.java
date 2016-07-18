@@ -55,28 +55,23 @@ public class Overlay {
         });
     }
 
-    /*public void hideBorder(){
-        top.hideBorder();
-        bottom.hideBorder();
-        if (!displayCenterCircle) {
-            top.hideCircle();
-            bottom.hideCircle();
-        }
-    }*/
-
     public void showBorder(){
         top.showBorder();
         bottom.showBorder();
-        if (!displayCenterCircle) {
+        if (displayCenterCircle) {
             top.showCircle();
             bottom.showCircle();
         }
     }
 
     public void hideBorder(){
+        top.hideBorder();
+        bottom.hideBorder();
+        if (!displayCenterCircle) {
+            top.hideCircle();
+            bottom.hideCircle();
+        }
     }
-
-
 
     public void distort(double xOrigin, double yOrigin, double xCurrent, double yCurrent){
 
