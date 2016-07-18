@@ -94,9 +94,10 @@ public class HtmlExporter {
                 if(image != null){
                     try {
                         // Copy temps image to target/resources folder.
+                        String target = new File(resFolder+image.getName()).getPath() + ".gif";
                         Files.copy(
                                 Paths.get(image.getPath().replace("file:","")),
-                                Paths.get(new File(resFolder+image.getName()).getPath())
+                                Paths.get(target)
                         );
                     }
                     catch (FileAlreadyExistsException alreadyExists){

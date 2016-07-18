@@ -38,7 +38,7 @@
                      <children>
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="FPS " />
                         <ComboBox id="fpsComboBox" fx:id="fpsSelector" prefWidth="70.0" promptText="24" />
-                        <CheckBox fx:id="circleCheckBox" mnemonicParsing="false" selected="true" text="Red circle">
+                        <CheckBox fx:id="circleCheckBox" mnemonicParsing="false" selected="true" text="Red circle" textFill="WHITE">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
@@ -102,6 +102,8 @@
         <items>
           <Button fx:id="addStep" mnemonicParsing="false" text="Add step" />
             <Button fx:id="batchRecord" mnemonicParsing="false" text="Batch record" />
+            <Separator orientation="VERTICAL" />
+            <Button fx:id="reset" mnemonicParsing="false" text="Reset" />
         </items>
       </ToolBar>
    </bottom>

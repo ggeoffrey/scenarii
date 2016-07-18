@@ -9,6 +9,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -28,7 +32,9 @@ import scenarii.model.Scenario;
 import scenarii.model.Step;
 import scenarii.overlay.Overlay;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -45,6 +51,7 @@ public class MainController implements Initializable {
     @FXML private Button exportTo;
     @FXML private Button compress;
     @FXML private Button batchRecord;
+    @FXML private Button reset;
     @FXML private TextField title;
     @FXML private TextField author;
     @FXML private TextArea description;
@@ -130,6 +137,9 @@ public class MainController implements Initializable {
             retrievePrimaryStage();
             primaryStage.toFront();
             scrollDown();
+            steps.stream()
+                    //.filter(Step::isLoading)
+                    .forEach(Step::setUnLoading);
         }));
 
         new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
@@ -183,6 +193,25 @@ public class MainController implements Initializable {
             listener.batchRecord();
         });
 
+        reset.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Reset warning");
+            alert.setHeaderText("You are going to loose all current steps and restart from scratch.");
+            alert.setContentText("Are you ok with this?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get() == ButtonType.NO || result.get() == ButtonType.CANCEL){
+                alert.close();
+            }
+            else{
+                steps.clear();
+                stepsContainer.getChildren().clear();
+                title.setText("");
+                targetFolder = null;
+                targetFolderPresent.set(false);
+            }
+        });
+
         ClipBoardActionsHandler clipBoardListener = new ClipBoardActionsHandler();
         title.setOnKeyPressed(clipBoardListener);
         author.setOnKeyPressed(clipBoardListener);
@@ -195,13 +224,16 @@ public class MainController implements Initializable {
     }
 
 
+    /*
     private void addStep(Step s){
         addStep(steps.size(), s);
     }
+    */
 
     private void addStep(int index, final Step s){
-        if(steps.size() == 1 && !steps.get(0).hasGif() && s.hasGif()){
-            steps.get(0).setImage(s.getGif());
+        if(steps.size() == 2 && !steps.get(0).hasGif() && s.hasGif()){
+            steps.remove(0);
+            addStep(0,s);
         }
         else {
             if(s.getPosition() == 0)
@@ -214,6 +246,18 @@ public class MainController implements Initializable {
 
             s.onMoveUpRequest(this::swapSteps);
             s.onMoveDownRequest(position -> swapSteps(position + 1));
+
+            s.onViewRequest(()->{
+                if(s.hasGif()){
+                    try {
+                        Desktop.getDesktop().open(s.getImage());
+                    } catch (IOException e) {
+                        System.err.println("ERROR: Unable to open step's image in default desktop viewer");
+                        System.err.println("       (Step::onViewRequest::λ.callback) ==>");
+                        System.err.println(e.getMessage());
+                    }
+                }
+            });
 
             s.onShotRequest(event -> {
                 s.setLoading();
@@ -232,6 +276,7 @@ public class MainController implements Initializable {
                     steps.get(i).setPosition(i + 1);
                 }
             });
+
         }
     }
 

@@ -194,11 +194,6 @@ class GifSequenceWriter {
             if(tempfile.exists()){
                 tempfile.deleteOnExit();
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             callback.accept(file.getPath());
         }
         catch (IOException e) {

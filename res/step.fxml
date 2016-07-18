@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.Double?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -18,12 +19,12 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="798.0" style="-fx-background-color: rgb(60,60,60);" styleClass="step" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="798.0" style="-fx-background-color: rgb(60,60,60);" styleClass="step" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="150.0" prefWidth="250.0" styleClass="gif-container" HBox.hgrow="ALWAYS">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER" />
-            <ImageView fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" styleClass="camera-icon">
+            <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="gif" StackPane.alignment="CENTER" />
+            <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="camera-icon">
                <image>
                   <Image url="@camera.png" />
                </image>
@@ -85,7 +86,20 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </AnchorPane>
-            <HBox prefHeight="95.0" prefWidth="62.0" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="95.0" prefWidth="62.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <children>
+                  <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="viewButton">
+                     <image>
+                        <Image url="@eye.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children></HBox>
             <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" styleClass="trash-button">
                <image>
                   <Image url="@trash.png" />
@@ -96,12 +110,14 @@
             </ImageView>
             <HBox prefHeight="50.0" prefWidth="200.0" />
          </children>
+         <HBox.margin>
+            <Insets left="3.0" right="5.0" />
+         </HBox.margin>
       </VBox>
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="10.0" HBox.hgrow="ALWAYS" />
       <VBox HBox.hgrow="ALWAYS">
          <children>
             <Label text="Description :" />
-            <TextArea prefHeight="133.0" prefWidth="638.0" styleClass="step-description" wrapText="true" />
+            <TextArea prefHeight="155.0" prefWidth="638.0" styleClass="step-description" wrapText="true" />
             <HBox prefHeight="32.0" prefWidth="575.0">
                <children>
                   <ChoiceBox prefWidth="150.0" styleClass="action-type" />

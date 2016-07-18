@@ -44,12 +44,16 @@ public class Step {
 
     private AnchorPane up;
     private AnchorPane down;
+    private ImageView viewButton;
     private ImageView trash;
+
 
     private File imageFile;
 
     private static Image spinner;
     private Image lastImage;
+
+    private boolean isLoading;
 
     public Step() {
         build();
@@ -77,6 +81,7 @@ public class Step {
             optionalData = (TextField) body.lookup(".step-data");
             up = (AnchorPane) body.lookup(".up");
             down = (AnchorPane) body.lookup(".down");
+            viewButton = (ImageView) body.lookup(".viewButton");
             trash = (ImageView) body.lookup(".trash-button");
 
             positionText.setText(""+position);
@@ -85,6 +90,7 @@ public class Step {
 
             description.setOnKeyPressed(new ClipBoardActionsHandler());
 
+            gifContainer.setMaxWidth(200);
 
             actions.setItems(FXCollections.observableArrayList(ActionType.values()));
             actions.setValue(ActionType.NOACTION);
@@ -142,34 +148,44 @@ public class Step {
     }
 
     public boolean hasGif(){
-        return gif.getImage() != null;
+        return gif.getImage() != null && gif.getImage() != spinner;
     }
 
     public void setLoading(){
-        lastImage = gif.getImage();
-        setImage(spinner);
+        if (hasGif()) {
+            lastImage = gif.getImage();
+            gif.setImage(spinner);
+        }
     }
 
     public void setUnLoading(){
-        setImage(lastImage);
+        if (!hasGif()) {
+            setImage(lastImage);
+            if(lastImage == null)
+                cameraIcon.setOpacity(1.);
+        }
     }
 
+    public boolean isLoading() {
+        return isLoading;
+    }
 
     public void setImage(String path){
         if(path != null){
-            imageFile = new File(path);
+            this.imageFile = new File(path);
             if(imageFile.exists() && imageFile.isFile()){
                 Image image = new Image("file:"+path);
                 setImage(image);
             }
         }
+        else cameraIcon.setOpacity(1.);
+
     }
 
     public void setImage(Image image){
         gif.setImage(image);
         cameraIcon.setOpacity(0.);
         gif.setPreserveRatio(true);
-        gifContainer.setMaxWidth(100);
     }
 
     public File getImage(){
@@ -194,6 +210,10 @@ public class Step {
         down.setOnMouseClicked(event -> callback.accept(position));
     }
 
+    public void onViewRequest(final Callback callback){
+        viewButton.setOnMouseClicked(event -> callback.accept());
+    }
+
     Map<String,Object> toJadeModel(PegDownProcessor parser){
         Map<String,Object> model = new HashMap<>();
 
@@ -201,7 +221,7 @@ public class Step {
         model.put("rawDescription", description.getText().replaceAll("\\n","\\$br"));
         model.put("description", parser.markdownToHtml(description.getText()));
         if(imageFile != null)
-            model.put("gif", imageFile.getName());
+            model.put("gif", imageFile.getName()+".gif");
 
         return model;
     }
