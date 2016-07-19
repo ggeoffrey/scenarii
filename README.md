@@ -1,7 +1,7 @@
 # This project is a work in progress
 Expect some bugs. Issues and pull requestes are very welcome !
 
-Require Java 8. Last stable can be found [here](target/scenarii-1.0-SNAPSHOT-jar-with-dependencies.jar).
+Require Java 8. Last stable can be found [here](https://github.com/ggeoffrey/scenarii/raw/master/target/scenarii-1.0-SNAPSHOT-jar-with-dependencies.jar).
 
 # Scenarii
 Be precise when you explain people how to do something on a computer, or you will end up with this situation :
