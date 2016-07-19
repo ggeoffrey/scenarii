@@ -10,21 +10,22 @@ package scenarii.camera;
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
 
-import org.w3c.dom.Node;
-
 import javax.imageio.*;
-import javax.imageio.metadata.*;
-import javax.imageio.stream.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
 
 /**
  * Created by Elliot Kroo on 2009-04-25.
- * Addapted by Geoffrey Gaillard, from Elliot Kroo's awesome work.
+ * Adapted by Geoffrey Gaillard, from Elliot Kroo's awesome work.
  * Please see the credits in the source file. (CC-BY)
  * (elliot[at]kroo[dot]net)
  */

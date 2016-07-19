@@ -24,11 +24,14 @@ html
             for step in steps
                 div.step
                     div.number #{step.position}
-                    div.gif-wrapper
-                        image.gif(src="./sc-images/#{step.gif}")
+                    //#div.gif-wrapper
+
                     div.description-wrapper
+                        image.gif(src="./sc-images/#{step.gif}")
                         div.description!= step.description
                         div.hidden.raw-description!= step.rawDescription
+        div#overlay
+            image#gif-overlay
 
 
     script(type="text/javascript")

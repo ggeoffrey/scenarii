@@ -1,82 +1,64 @@
 body{
-  background-color: whitesmoke  ;
+    background-color: whitesmoke;
 }
 
-html, body{  max-width: 100%;
+html, body{
+    max-width: 100%;
+    margin:1em;
+    text-align: justify;
 }
 
 .data-wrapper{
-  border-bottom: 1px gray solid;
+    border-bottom: 1px gray solid;
 }
 
 .step{
-  max-height: 15em;
-  padding-bottom: 1em;
+    padding-bottom: 1em;
+    overflow: auto;
+    border-bottom: 1px lightgray;
 }
 
 .step .number{
-  background-color: white;
-  font-size: xx-large;
-  display: inline-block;
-  width: 1.1em;
-  height: 1.1em;
-  text-align: center;
-  border-radius: 1em;
-  position: absolute;
-  margin: 0em;
-  box-shadow: 0 0 0.1em gray;
-  z-index: 1;
+    background-color: white;
+    font-size: xx-large;
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    text-align: center;
+    border-radius: 1em;
+    position: absolute;
+    margin: 0.1em 0 0 0;
+    box-shadow: 0 0 1em lightgray;
+    z-index: 1;
 }
 
-.step .gif-wrapper{
-  margin-left: 0.7em;
-  width: 15em;
-  height: 15em;
-  line-height: 15em;
-  border-bottom: 1px gray solid;
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-  transition: 0.4s all;
-}
-
-.step .gif-wrapper .gif {
-  max-width: 15em;
-  max-height: 15em;
-  box-shadow: 0 0 0.5em grey;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.step .gif-wrapper:hover .gif, .step .gif-wrapper .gif:hover{
-  /*transform: scale(3);
-  position: absolute;
-  transition: all 0.4s;
-  z-index: 2;
-  */
-  position: absolute;
-  margin-left: 10vh;
-  z-index: 2;
-  transform: translate(50%,-50%) scale(3);
-  -webkit-transform: translate(50%,-50%) scale(3);
-  transition: 0.4s all;
-}
-
-.step .description-wrapper{
-  display: table-cell;
-  max-height: 15em;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  word-wrap: break-word;
-  width: 75%;
-}
-
-.step .description-wrapper .description{
-  text-align: justify;
-  padding: 0 0 0 1em;
+.gif {
+    max-width: 18em;
+    margin: 0.5em 1em 0.5em 0.5em;
+    float: left;
+    cursor: pointer;
+    box-shadow: 0 0 1em lightgray;
 }
 
 .hidden{
-  display:none;
+    display:none;
+}
+
+#overlay{
+    background-color: rgba(0, 0, 0, 0.79);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    display: none;
+    cursor: pointer;
+    text-align: center;
+    padding: 1em;
+    overflow: scroll;
+}
+#gif-overlay{
+
 }
 
