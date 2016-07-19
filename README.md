@@ -1,9 +1,14 @@
-Be precise when you explain people how to do something on a computer, or you will end up in this situation :
+# This project is a work in progress
+Expect some bugs. Issues and pull requestes are very welcome !
 
+Require Java 8. Last stable can be found [here](target/scenarii-1.0-SNAPSHOT-jar-with-dependencies.jar).
+
+# Scenarii
+Be precise when you explain people how to do something on a computer, or you will end up with this situation :
 
 ![Press any key to continue](doc/img/any_key.jpg)
 
-# Scenarii
+
 
 A small cross-platform utility to record your screen as GIFs or quickly take screenshots. 
 You can then commentate them, provide some data, compress the whole thing and mail it or publish it as an `.html` page.
@@ -16,7 +21,8 @@ Scenarii is especially useful for :
 # How it works
 Scenarii listen to keyboard shortcuts in the background, whatever application you are currently using.
 
-Launch scenarii, you get this view:   ![Scenarii's main view](doc/img/landpage.jpg)
+Launch scenarii, you get this view:  
+![Scenarii's main view](doc/img/landpage.jpg)
 
 Don't play with all buttons right now and read on, this is important. If you decided to ignore my warning and  clicked everywhere, use the `ESC` key on your keyboard as much as needed.
 
@@ -78,6 +84,10 @@ Remember:
 
 Scenarii is designed to record any kind of application, it's hard to pick neutral shortcuts as applications uses keyboard shortcuts too.
 So to avoid triggering some unwanted behaviour in the recorded application, Scenarii use only the most neutral keys.
+
+# Examples
+
+Coming soon.
 
 # Compatibility
 
