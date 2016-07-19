@@ -1,7 +1,7 @@
 Be precise when you explain people how to do something on a computer, or you will end up in this situation :
 
 
-[be_wise](https://raw.githubusercontent.com/ggeoffrey/scenarii/master/doc/img/any_key.jpg)
+![Press any key to continue](doc/img/any_key.jpg)
 
 # Scenarii
 
@@ -16,7 +16,7 @@ Scenarii is especially useful for :
 # How it works
 Scenarii listen to keyboard shortcuts in the background, whatever application you are currently using.
 
-Launch scenarii, you get this view:   [landpage](https://raw.githubusercontent.com/ggeoffrey/scenarii/master/doc/img/landpage.jpg)
+Launch scenarii, you get this view:   ![Scenarii's main view](doc/img/landpage.jpg)
 
 Don't play with all buttons right now and read on, this is important. If you decided to ignore my warning and  clicked everywhere, use the `ESC` key on your keyboard as much as needed.
 
