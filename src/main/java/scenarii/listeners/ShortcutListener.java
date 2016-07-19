@@ -27,6 +27,8 @@ public class ShortcutListener extends NativeEventListener {
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
         try {
+            // wait some time to allow the java listener to
+            // getCodes() before it's removed from the set
             Thread.sleep(50);
             codes.remove(nativeKeyEvent.getKeyCode());
         } catch (InterruptedException e) {
