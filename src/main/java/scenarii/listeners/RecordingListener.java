@@ -117,20 +117,21 @@ public class RecordingListener extends NativeEventListener{
                 ctrlKey = false;
                 break;
             case 56: // alt
-                escCount = escCount > 0 ? escCount-1 : 0;
-                overlay.hideBorder();
-                if(batchRecord){
-                    Step s = new Step();
-                    s.setLoading();
-                    steps.add(s);
-                    cameraInstanceStopper = camera.record(s::setImage);
-                }
-                else {
-                    cameraInstanceStopper = camera.record(onGifGenerated);
-                    onGifGenerated = (path)->{
-                        System.err.println("WARNING: Attempting to call an already consumed callback.");
-                        System.err.println("         (RecordingListener::nativeKeyReleased::λ.onGifGenerated)");
-                    };
+                if(!camera.isRecording()) {
+                    escCount = escCount > 0 ? escCount - 1 : 0;
+                    overlay.hideBorder();
+                    if (batchRecord) {
+                        Step s = new Step();
+                        s.setLoading();
+                        steps.add(s);
+                        cameraInstanceStopper = camera.record(s::setImage);
+                    } else {
+                        cameraInstanceStopper = camera.record(onGifGenerated);
+                        onGifGenerated = (path) -> {
+                            System.err.println("WARNING: Attempting to call an already consumed callback.");
+                            System.err.println("         (RecordingListener::nativeKeyReleased::λ.onGifGenerated)");
+                        };
+                    }
                 }
                 break;
         }
