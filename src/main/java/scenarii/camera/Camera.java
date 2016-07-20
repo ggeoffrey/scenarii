@@ -1,6 +1,7 @@
 package scenarii.camera;
 
 import scenarii.dirtycallbacks.Callback;
+import scenarii.dirtycallbacks.Do;
 import scenarii.dirtycallbacks.MutableWrappedValue;
 import scenarii.overlay.Overlay;
 
@@ -64,46 +65,40 @@ public class Camera {
             GifSequenceWriter writer = initGifWrite(fps, path).orElse(null);
             if(writer != null){
                 isRecording = true;
-                final Timer timer = new Timer(true);
                 MutableWrappedValue<Integer> seqencesCount = new MutableWrappedValue<>(0);
-                int delay = (int) fpsToDelay(fps);
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        BufferedImage cropped = cropImage(getRawImage(), overlay);
-                        try {
-                            writer.writeToSequence(cropped);
-                            seqencesCount.set(seqencesCount.get()+1);
-                        } catch (IOException e) {
-                            System.err.println("ERROR: unable to write frame to current gif file");
-                            System.err.println("       at (Camera::record::timertask.run)  ==>");
-                            System.err.println(e.getMessage());
-                        }
-                    }
-                }, 100, delay);
 
+                int delay = (int) fpsToDelay(fps);
+                final Timer timer = Do.every(100, delay, ()->{
+                    BufferedImage cropped = cropImage(getRawImage(), overlay);
+                    try {
+                        writer.writeToSequence(cropped);
+                        seqencesCount.set(seqencesCount.get()+1);
+                    } catch (IOException e) {
+                        System.err.println("ERROR: unable to write frame to current gif file");
+                        System.err.println("       at (Camera::record::timertask.run)  ==>");
+                        System.err.println(e.getMessage());
+                    }
+                });
 
                 long start = new Date().getTime();
 
                 stopper = ()->{
                     timer.cancel();
                     new Thread(()->{
-                        try {
                             long stop = new Date().getTime();
-                            Thread.sleep(250);
-                            writer.close();
-                            GifSequenceWriter.fixFrameRate(path, stop-start, callback);
-                        } catch (IOException e) {
-                            System.err.println("ERROR: unable to close the writer after writing a frame sequence");
-                            System.err.println("       of "+ seqencesCount.get() +" frames. ");
-                            System.err.println("       (Camera::record::λ.stopper) ==>");
-                            System.err.println(e.getMessage());
-                        }
-                        catch (InterruptedException e){
-                            System.err.println("ERROR: for some strange reason Thread.sleep was interrupted.");
-                            System.err.println("       (Camera::record::λ.stopper) ==>");
-                            System.err.println(e.getMessage());
-                        }
+                            Do.after(250,()->{
+                                try {
+                                    writer.close();
+                                    GifSequenceWriter.fixFrameRate(path, stop-start, callback);
+                                } catch (IOException e) {
+                                    System.err.println("ERROR: unable to close the writer after writing a frame sequence");
+                                    System.err.println("       of "+ seqencesCount.get() +" frames. ");
+                                    System.err.println("       (Camera::record::λ.stopper) ==>");
+                                    System.err.println(e.getMessage());
+                                }
+                            });
+
+
                     }).start();
 
                     isRecording = false;

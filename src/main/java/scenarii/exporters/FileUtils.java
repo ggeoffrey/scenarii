@@ -25,6 +25,10 @@ public class FileUtils {
         }
     }
 
+    public static String exportableFolderName(String file){
+        return file.replaceAll("\\s","_");
+    }
+
     /**
      * Read a text file.
      * @param path File to read

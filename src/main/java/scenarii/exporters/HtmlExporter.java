@@ -60,7 +60,7 @@ public class HtmlExporter {
         progressIndicator.setProgress(percent(1,steps));
 
         // Create the target folder name
-        final String name = scenario.getTitle().replaceAll("\\s","_");
+        final String name = FileUtils.exportableFolderName(scenario.getTitle());
         final String path = targetFolder+"/"+name+"/";
 
         // make it

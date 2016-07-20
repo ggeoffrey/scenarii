@@ -48,15 +48,13 @@ public class Main extends Application {
                 GlobalScreen.unregisterNativeHook();
 
                 // Clean temp files
-                String path = System.getProperty("user.home")+"/scenarii-snaps/";
+                String path = System.getProperty("user.home") + "/scenarii-snaps/";
                 FileUtils.deleteDirectory(new File(path));
             } catch (NativeHookException | IOException e) {
                 e.printStackTrace();
             }
         });
     }
-
-
 
     public static void main(final String[] args) { launch(args); }
 }

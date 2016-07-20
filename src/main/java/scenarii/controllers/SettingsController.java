@@ -1,20 +1,19 @@
 package scenarii.controllers;
 
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import scenarii.collections.CollectionUtils;
 import scenarii.listeners.ShortcutListener;
+import scenarii.listeners.SimpleShotListener;
 
-import java.awt.event.KeyAdapter;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -33,13 +32,10 @@ public class SettingsController implements Initializable {
 
 
     private Stage thisStage;
-
-    private boolean listening;
     private ShortcutListener listener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        listening = false;
         listener = new ShortcutListener();
 
         final TreeSet<String> combo = new TreeSet<>();
@@ -52,24 +48,31 @@ public class SettingsController implements Initializable {
         codeSnap.setOnKeyPressed(handlerPressed::accept);
         codeSnapAlt.setOnKeyPressed(handlerPressed::accept);
 
-        Consumer<KeyEvent> handlerReleased = (e)->{
-            String codes = CollectionUtils.join(listener.getCodes(),"-");
-            System.out.println(CollectionUtils.join(combo,"+"));
-            System.out.println("|" + codes + "|");
+        codeSnap.setOnKeyReleased((e)->{
+            HashSet<Integer> codes = listener.getCodes();
+            SimpleShotListener listener = mainControllerRef.getSimpleShotListner();
+            listener.setShortcut1(codes);
             combo.clear();
+        });
+        codeSnapAlt.setOnKeyReleased((e)->{
+            HashSet<Integer> codes = listener.getCodes();
+            SimpleShotListener listener = mainControllerRef.getSimpleShotListner();
+            listener.setShortcut2(codes);
+            combo.clear();
+        });
+
+         ChangeListener<Boolean> listenerToggleState = (observable, oldValue, newValue) -> {
+            if (newValue)
+                listener.bind();
+            else
+                listener.unbind();
         };
 
-        codeSnap.setOnKeyReleased(handlerReleased::accept);
-        codeSnapAlt.setOnKeyReleased(handlerReleased::accept);
+        codeSnap.focusedProperty().addListener(listenerToggleState);
+        codeSnapAlt.focusedProperty().addListener(listenerToggleState);
 
-        codeSnap.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue){
-                listener.bind();
-            }
-            else{
-                listener.unbind();
-            }
-        });
+
+        doneButton.setOnAction(event -> thisStage.hide());
     }
 
     void setMainControllerRef(MainController mainControllerRef) {

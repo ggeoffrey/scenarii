@@ -60,7 +60,10 @@
                       <Double fx:value="-2.0" />
                     </points>
                   </Polygon>
-                  <Rectangle fill="WHITE" height="6.0" layoutX="11.0" layoutY="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="4.0" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="12.0" />
+                  <Rectangle fill="WHITE" height="6.0" layoutX="11.0" layoutY="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="4.0" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="12.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Rectangle>
                </children>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -69,7 +72,10 @@
             <HBox minHeight="-Infinity" prefHeight="3.0" prefWidth="26.0" />
             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="26.0" rotate="180.0" styleClass="down">
                <children>
-                  <Circle fill="#ffffff00" radius="13.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Circle fill="#ffffff00" radius="13.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Circle>
                   <Polygon fill="WHITE" layoutX="13.0" layoutY="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="6.0">
                      <points>
                         <Double fx:value="-5.0" />

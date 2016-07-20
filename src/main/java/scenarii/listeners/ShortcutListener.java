@@ -2,19 +2,19 @@ package scenarii.listeners;
 
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.mouse.NativeMouseEvent;
+import scenarii.dirtycallbacks.Do;
 
-import java.util.TreeSet;
-import java.util.function.Consumer;
+import java.util.HashSet;
 
 /**
  * Created by geoffrey on 24/05/2016.
  */
 public class ShortcutListener extends NativeEventListener {
 
-    private TreeSet<Integer> codes;
+    private HashSet<Integer> codes;
 
     public ShortcutListener(){
-        codes = new TreeSet<>();
+        codes = new HashSet<>();
     }
 
     @Override
@@ -26,18 +26,11 @@ public class ShortcutListener extends NativeEventListener {
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-        try {
-            // wait some time to allow the java listener to
-            // getCodes() before it's removed from the set
-            Thread.sleep(50);
-            codes.remove(nativeKeyEvent.getKeyCode());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Do.after(200, ()-> codes.remove(nativeKeyEvent.getKeyCode()));
     }
 
-    public TreeSet<Integer> getCodes() {
-        return codes;
+    public HashSet<Integer> getCodes() {
+        return new HashSet<>(codes);
     }
 
     public void bind(){

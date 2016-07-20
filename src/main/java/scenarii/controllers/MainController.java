@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import org.zeroturnaround.zip.ZipUtil;
 import scenarii.camera.Camera;
 import scenarii.collections.ObservableArrayList;
+import scenarii.dirtycallbacks.Do;
 import scenarii.exporters.FileUtils;
 import scenarii.exporters.HtmlExporter;
 import scenarii.helpers.PopupHelper;
@@ -78,6 +79,7 @@ public class MainController implements Initializable {
 
     private SettingsController settingsController;
     private Stage settingsStage;
+    private SimpleShotListener simpleShotListner;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -109,6 +111,17 @@ public class MainController implements Initializable {
         export.disableProperty().bind(canExportOrCompress);
         exportTo.disableProperty().bind(exportAvailable);
         compress.disableProperty().bind(canExportOrCompress);
+
+        root.setOnKeyReleased(event -> {
+            if(event.isControlDown() || event.isMetaDown()){
+                String s = event.getCode().getName();
+                if(s == "S" || s == "K"){
+                    if(canExportOrCompress.not().get())
+                        export.fire();
+                    else exportTo.fire();
+                }
+            }
+        });
 
         final int defaultFps = 30;
         fpsSelector.getItems().addAll(3,6,12,18,24,30);
@@ -147,7 +160,7 @@ public class MainController implements Initializable {
                     .forEach(Step::setUnLoading);
         }));
 
-        new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
+        simpleShotListner = new SimpleShotListener(camera, (step) -> Platform.runLater(() -> {
             steps.add(step);
             scrollDown();
         }), ()->{
@@ -251,13 +264,11 @@ public class MainController implements Initializable {
             System.err.println("       (MainController::configureButton::λ.onAction) ==>");
             System.err.println(e.getMessage());
         }
-
         configureButton.setOnAction(event -> {
             settingsStage.show();
+            settingsStage.toFront();
         });
-
     }
-
 
 
     private void addStep(int index, final Step s){
@@ -306,7 +317,6 @@ public class MainController implements Initializable {
                     steps.get(i).setPosition(i + 1);
                 }
             });
-
         }
     }
 
@@ -322,13 +332,12 @@ public class MainController implements Initializable {
         }
     }
 
-
     private void compress(){
         if(canExportOrCompress.not().get()){
             progress.setProgress(-1.);
             invalidName.setValue(true);
 
-            String path = targetFolder+"/"+title.getText();
+            String path = targetFolder+"/"+FileUtils.exportableFolderName(title.getText());
             ZipUtil.pack(new File(path), new File(path+".zip"), Deflater.BEST_COMPRESSION);
 
             progress.setProgress(1.);
@@ -374,34 +383,15 @@ public class MainController implements Initializable {
     private void scrollDown(){
         if (!scrolling) {
             scrolling = true;
-            new Thread(()->{
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(() -> {
-                    scrollPane.setVvalue(scrollPane.getVmax());
-                    scrolling = false;
-                });
-            }).start();
+            Do.after(10, ()-> Platform.runLater(() -> {
+                scrollPane.setVvalue(scrollPane.getVmax());
+                scrolling = false;
+            }));
         }
     }
 
 
-
-    private Optional<Integer> lasyIntParse(String s){
-        try{
-            String intvalue = s.replaceAll("\\d+", "");
-            if(intvalue.length()>0)
-                return Optional.of(Integer.parseInt(intvalue));
-            else return Optional.empty();
-        }
-        catch (Exception e){
-            System.err.println("ERROR: Unable to parse an internal String to int where it should work.");
-            System.err.println("       (MainController::lazyIntParse) ==>");
-            System.err.println(e.getMessage());
-            return Optional.empty();
-        }
+    SimpleShotListener getSimpleShotListner() {
+        return simpleShotListner;
     }
 }
