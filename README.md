@@ -32,7 +32,8 @@ Ok so, here you can :
 - `export` it `to` another destination,
 - `compress` the exported folder,
 - select the framerate with `FPS`: 3, 6, 12, 18, 24 or 30 frames per seconds,
-- enable/disable the `red circle` that display mouse/finger position on shot.
+- enable/disable the `red circle` that display mouse/finger position on shot,
+- customize some shortcuts with `configure`.
 
 You can also, at the bottom :
 - Add a step with `Add step`,
@@ -41,7 +42,8 @@ You can also, at the bottom :
 
 ## Take a screenshot
 Simply press `Ctrl`+`Shift`+`C` or `Ctrl`+`Shift`+`P` in any application. 
-It will add a step in Scenarii containing the screenshot. This shortcut will soon be customizable.
+It will add a step in Scenarii containing the screenshot. You can change 
+this shortcut by clicking the `configure` button in the top bar. 
 
 ## Record a GIF
 
@@ -80,7 +82,7 @@ Remember:
 - `ESC` : stop and go back, press 2 times to exit a running batch record,
 - `Ctrl` : resize the GIFs camera field of view,
 - `Alt` : start recording,
-- `Ctrl`+`Shift`+`C`, `Ctrl`+`Shift`+`P` : take an instant screenshot (soon customizable).
+- `Ctrl`+`Shift`+`C`, `Ctrl`+`Shift`+`P` : take an instant screenshot (customizable).
 
 Scenarii is designed to record any kind of application, it's hard to pick neutral shortcuts as applications uses keyboard shortcuts too.
 So to avoid triggering some unwanted behaviour in the recorded application, Scenarii use only the most neutral keys.
