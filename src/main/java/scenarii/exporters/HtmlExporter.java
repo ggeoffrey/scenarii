@@ -94,7 +94,7 @@ public class HtmlExporter {
                 if(image != null){
                     try {
                         // Copy temps image to target/resources folder.
-                        String target = new File(resFolder+image.getName()).getPath() + ".gif";
+                        String target = new File(resFolder+image.getName()).getPath();
                         Files.copy(
                                 Paths.get(image.getPath().replace("file:","")),
                                 Paths.get(target)
