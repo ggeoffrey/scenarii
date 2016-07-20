@@ -222,7 +222,7 @@ public class Step {
         model.put("rawDescription", description.getText().replaceAll("\\n","\\$br"));
         model.put("description", parser.markdownToHtml(description.getText()));
         if(imageFile != null)
-            model.put("gif", imageFile.getName()+".gif");
+            model.put("gif", imageFile.getName());
 
         return model;
     }
